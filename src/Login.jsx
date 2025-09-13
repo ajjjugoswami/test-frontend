@@ -2,40 +2,21 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import './Auth.css';
 
-function SignUp({ onSwitchToSignIn }) {
+const Login = ({ onSwitchToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signup } = useAuth();
+  const { login } = useAuth();
 
-  const handleSignUp = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
 
-    if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
-      setIsLoading(false);
-      return;
-    }
+    const result = await login(email, password);
 
-    if (password.length < 6) {
-      setMessage('Password must be at least 6 characters long');
-      setIsLoading(false);
-      return;
-    }
-
-    const result = await signup(email, password);
-
-    if (result.success) {
-      setMessage(result.message);
-      // Clear form
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-    } else {
+    if (!result.success) {
       setMessage(result.message);
     }
 
@@ -45,10 +26,10 @@ function SignUp({ onSwitchToSignIn }) {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Create Account</h2>
-        <p className="auth-subtitle">Sign up to get started</p>
+        <h2>Welcome Back</h2>
+        <p className="auth-subtitle">Sign in to your account</p>
 
-        <form onSubmit={handleSignUp} className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -70,22 +51,7 @@ function SignUp({ onSwitchToSignIn }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Create a password"
-              minLength="6"
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              placeholder="Confirm your password"
-              minLength="6"
+              placeholder="Enter your password"
               disabled={isLoading}
             />
           </div>
@@ -101,20 +67,20 @@ function SignUp({ onSwitchToSignIn }) {
             className="auth-button primary"
             disabled={isLoading}
           >
-            {isLoading ? 'Creating Account...' : 'Sign Up'}
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Already have an account?{' '}
+            Don't have an account?{' '}
             <button
               type="button"
-              onClick={onSwitchToSignIn}
+              onClick={onSwitchToSignup}
               className="link-button"
               disabled={isLoading}
             >
-              Sign In
+              Sign Up
             </button>
           </p>
         </div>
@@ -123,4 +89,4 @@ function SignUp({ onSwitchToSignIn }) {
   );
 };
 
-export default SignUp;
+export default Login;

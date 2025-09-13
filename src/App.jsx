@@ -1,100 +1,48 @@
 import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './AuthContext';
+import Login from './Login';
 import SignUp from './SignUp';
-import { API_ENDPOINTS } from './api';
+import Dashboard from './Dashboard';
 import './App.css';
 
-function SignIn({ onSwitchToSignUp }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+// Main App Component
+function AppContent() {
+  const [currentView, setCurrentView] = useState('login'); // 'login', 'signup', 'dashboard'
+  const { isAuthenticated, isLoading } = useAuth();
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage('');
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
-    try {
-      const response = await fetch(API_ENDPOINTS.SIGNIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  // If user is authenticated, show dashboard
+  if (isAuthenticated()) {
+    return <Dashboard />;
+  }
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage('Sign in successful!');
-        localStorage.setItem('token', data.token);
-        // In a real app, you'd redirect to dashboard or home page
-      } else {
-        setMessage(data.message || 'Sign in failed');
-      }
-    } catch (error) {
-      setMessage('Network error. Please try again.');
-      console.error('Sign in error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  // Show auth forms based on current view
   return (
-    <div className="signin-container">
-      <h1>Sign In</h1>
-      <form onSubmit={handleSignIn} className="signin-form">
-        <div className="form-group">
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="Enter your email"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Enter your password"
-          />
-        </div>
-        <button type="submit" disabled={isLoading} className="signin-btn">
-          {isLoading ? 'Signing In...' : 'Sign In'}
-        </button>
-      </form>
-      {message && <p className="message">{message}</p>}
-      <p className="switch-link">
-        Don't have an account?{' '}
-        <button type="button" onClick={onSwitchToSignUp} className="link-btn">
-          Sign Up
-        </button>
-      </p>
+    <div className="app">
+      {currentView === 'login' ? (
+        <Login onSwitchToSignup={() => setCurrentView('signup')} />
+      ) : (
+        <SignUp onSwitchToSignIn={() => setCurrentView('login')} />
+      )}
     </div>
   );
 }
 
+// Main App with AuthProvider
 function App() {
-  const [isSignUp, setIsSignUp] = useState(true);
-
-  const handleSwitchToSignIn = () => setIsSignUp(false);
-  const handleSwitchToSignUp = () => setIsSignUp(true);
-
   return (
-    <div className="app">
-      {isSignUp ? (
-        <SignUp onSwitchToSignIn={handleSwitchToSignIn} />
-      ) : (
-        <SignIn onSwitchToSignUp={handleSwitchToSignUp} />
-      )}
-    </div>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
