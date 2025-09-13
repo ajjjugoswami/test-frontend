@@ -16,7 +16,8 @@ body {
   padding: 20px;
 }
 
-.signin-container {
+.signin-container,
+.signup-container {
   background: white;
   padding: 2rem;
   border-radius: 8px;
@@ -25,13 +26,15 @@ body {
   max-width: 400px;
 }
 
-.signin-container h1 {
+.signin-container h1,
+.signup-container h1 {
   text-align: center;
   margin-bottom: 1.5rem;
   color: #333;
 }
 
-.signin-form {
+.signin-form,
+.signup-form {
   display: flex;
   flex-direction: column;
 }
@@ -62,7 +65,8 @@ body {
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.signin-btn {
+.signin-btn,
+.signup-btn {
   background-color: #007bff;
   color: white;
   border: none;
@@ -73,11 +77,13 @@ body {
   transition: background-color 0.2s;
 }
 
-.signin-btn:hover:not(:disabled) {
+.signin-btn:hover:not(:disabled),
+.signup-btn:hover:not(:disabled) {
   background-color: #0056b3;
 }
 
-.signin-btn:disabled {
+.signin-btn:disabled,
+.signup-btn:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
 }
@@ -93,4 +99,25 @@ body {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
+}
+
+.switch-link {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  padding: 0;
+}
+
+.link-btn:hover {
+  color: #0056b3;
 }

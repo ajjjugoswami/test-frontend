@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import SignUp from './SignUp';
 import './App.css';
 
-function App() {
+function SignIn({ onSwitchToSignUp }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -39,38 +40,59 @@ function App() {
   };
 
   return (
+    <div className="signin-container">
+      <h1>Sign In</h1>
+      <form onSubmit={handleSignIn} className="signin-form">
+        <div className="form-group">
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="Enter your email"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder="Enter your password"
+          />
+        </div>
+        <button type="submit" disabled={isLoading} className="signin-btn">
+          {isLoading ? 'Signing In...' : 'Sign In'}
+        </button>
+      </form>
+      {message && <p className="message">{message}</p>}
+      <p className="switch-link">
+        Don't have an account?{' '}
+        <button type="button" onClick={onSwitchToSignUp} className="link-btn">
+          Sign Up
+        </button>
+      </p>
+    </div>
+  );
+}
+
+function App() {
+  const [isSignUp, setIsSignUp] = useState(true);
+
+  const handleSwitchToSignIn = () => setIsSignUp(false);
+  const handleSwitchToSignUp = () => setIsSignUp(true);
+
+  return (
     <div className="app">
-      <div className="signin-container">
-        <h1>Sign In</h1>
-        <form onSubmit={handleSignIn} className="signin-form">
-          <div className="form-group">
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Enter your email"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Enter your password"
-            />
-          </div>
-          <button type="submit" disabled={isLoading} className="signin-btn">
-            {isLoading ? 'Signing In...' : 'Sign In'}
-          </button>
-        </form>
-        {message && <p className="message">{message}</p>}
-      </div>
+      {isSignUp ? (
+        <SignUp onSwitchToSignIn={handleSwitchToSignIn} />
+      ) : (
+        <SignIn onSwitchToSignUp={handleSwitchToSignUp} />
+      )}
     </div>
   );
 }
