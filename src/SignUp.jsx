@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_ENDPOINTS } from './api';
 
 function SignUp({ onSwitchToSignIn }) {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ function SignUp({ onSwitchToSignIn }) {
     }
 
     try {
-      const response = await fetch('/api/signup', {
+      const response = await fetch(API_ENDPOINTS.SIGNUP, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

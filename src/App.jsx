@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SignUp from './SignUp';
+import { API_ENDPOINTS } from './api';
 import './App.css';
 
 function SignIn({ onSwitchToSignUp }) {
@@ -14,7 +15,7 @@ function SignIn({ onSwitchToSignUp }) {
     setMessage('');
 
     try {
-      const response = await fetch('/api/signin', {
+      const response = await fetch(API_ENDPOINTS.SIGNIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
