@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { ConfigProvider } from "antd";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import PrivateRoute from "./components/PrivateRoute";
 import AppLayout from "./components/layout/AppLayout";
@@ -11,12 +11,16 @@ import {
   DEFAULT_PRIVATE_PATH,
 } from "./routes";
 
-const theme = {
-  token: {
-    colorPrimary: "#1890ff",
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1890ff',
+    },
+  },
+  shape: {
     borderRadius: 8,
   },
-};
+});
 
 const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -67,11 +71,11 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <BrowserRouter>
-      <ConfigProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <AuthProvider>
           <AppRoutes />
         </AuthProvider>
-      </ConfigProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 };

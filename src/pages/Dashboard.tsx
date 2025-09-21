@@ -1,73 +1,96 @@
-import { Card, Typography, Row, Col, Statistic, Avatar } from 'antd';
-import { UserOutlined, DashboardOutlined, SettingOutlined } from '@ant-design/icons';
+import { Card, CardContent, Typography, Avatar, Box } from '@mui/material';
+import { LayoutDashboard, User, Settings } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-
-const { Title, Text } = Typography;
 
 const Dashboard = () => {
   const { user } = useAuth();
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <Title level={2}>
-          <DashboardOutlined style={{ marginRight: '12px' }} />
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" component="h1" sx={{ display: 'flex', alignItems: 'center' }}>
+          <LayoutDashboard size={24} style={{ marginRight: 12 }} />
           Dashboard
-        </Title>
-        <Text type="secondary">Welcome to your dashboard</Text>
-      </div>
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Welcome to your dashboard
+        </Typography>
+      </Box>
 
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} md={8}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <Card>
-            <Statistic
-              title="User ID"
-              value={user?.id || 'N/A'}
-              prefix={<UserOutlined />}
-            />
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                User ID
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <User size={20} style={{ marginRight: 8 }} />
+                <Typography variant="h4">
+                  {user?.id || 'N/A'}
+                </Typography>
+              </Box>
+            </CardContent>
           </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8}>
+        </Box>
+        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <Card>
-            <Statistic
-              title="Email"
-              value={user?.email || 'N/A'}
-              prefix={<UserOutlined />}
-            />
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Email
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <User size={20} style={{ marginRight: 8 }} />
+                <Typography variant="h4">
+                  {user?.email || 'N/A'}
+                </Typography>
+              </Box>
+            </CardContent>
           </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8}>
+        </Box>
+        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <Card>
-            <Statistic
-              title="Status"
-              value="Active"
-              valueStyle={{ color: '#3f8600' }}
-              prefix={<SettingOutlined />}
-            />
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Status
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Settings size={20} style={{ marginRight: 8 }} />
+                <Typography variant="h4" sx={{ color: '#3f8600' }}>
+                  Active
+                </Typography>
+              </Box>
+            </CardContent>
           </Card>
-        </Col>
-      </Row>
+        </Box>
+      </Box>
 
-      <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
-        <Col span={24}>
-          <Card title="Profile Information" bordered={false}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <Avatar size={64} icon={<UserOutlined />} />
-              <div>
-                <Title level={4} style={{ margin: 0 }}>
+      <Box sx={{ mt: 3 }}>
+        <Card>
+          <CardContent>
+            <Typography variant="h5" gutterBottom>
+              Profile Information
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ width: 64, height: 64 }}>
+                <User size={32} />
+              </Avatar>
+              <Box>
+                <Typography variant="h6">
                   {user?.email}
-                </Title>
-                <Text type="secondary">Registered User</Text>
-                <br />
-                <Text type="secondary">
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Registered User
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
                   Account created successfully. You can now access all features.
-                </Text>
-              </div>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-    </div>
+                </Typography>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+    </Box>
   );
 };
 

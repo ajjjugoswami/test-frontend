@@ -1,28 +1,7 @@
 import { ComponentType } from 'react';
-import { useNavigate } from 'react-router-dom';
-import LoginForm from './components/forms/LoginForm';
-import SignupForm from './components/forms/SignupForm';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
-
-const LoginWrapper = () => {
-  const navigate = useNavigate();
-  return (
-    <LoginForm
-      onSwitchToSignup={() => navigate('/signup')}
-      onLoginSuccess={() => navigate('/')}
-    />
-  );
-};
-
-const SignupWrapper = () => {
-  const navigate = useNavigate();
-  return (
-    <SignupForm
-      onSwitchToLogin={() => navigate('/login')}
-      onSignupSuccess={() => navigate('/login')}
-    />
-  );
-};
 
 export interface RouteConfig {
   path: string;
@@ -34,13 +13,13 @@ export interface RouteConfig {
 export const publicRoutes: RouteConfig[] = [
   {
     path: '/login',
-    component: LoginWrapper,
+    component: Login,
     title: 'Login',
     requiresAuth: false,
   },
   {
     path: '/signup',
-    component: SignupWrapper,
+    component: Signup,
     title: 'Sign Up',
     requiresAuth: false,
   },
