@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import './Auth.css';
 
-function SignUp({ onSwitchToSignIn }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+interface SignUpProps {
+  onSwitchToSignIn: () => void;
+}
+
+const SignUp: React.FC<SignUpProps> = ({ onSwitchToSignIn }) => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signup } = useAuth();
 
-  const handleSignUp = async (e) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
@@ -30,13 +34,13 @@ function SignUp({ onSwitchToSignIn }) {
     const result = await signup(email, password);
 
     if (result.success) {
-      setMessage(result.message);
+      setMessage(result.message || '');
       // Clear form
       setEmail('');
       setPassword('');
       setConfirmPassword('');
     } else {
-      setMessage(result.message);
+      setMessage(result.message || '');
     }
 
     setIsLoading(false);
@@ -55,7 +59,7 @@ function SignUp({ onSwitchToSignIn }) {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
               disabled={isLoading}
@@ -68,10 +72,10 @@ function SignUp({ onSwitchToSignIn }) {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
-              minLength="6"
+              minLength={6}
               disabled={isLoading}
             />
           </div>
@@ -82,10 +86,10 @@ function SignUp({ onSwitchToSignIn }) {
               type="password"
               id="confirmPassword"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
               required
               placeholder="Confirm your password"
-              minLength="6"
+              minLength={6}
               disabled={isLoading}
             />
           </div>

@@ -2,10 +2,10 @@ import React from 'react';
 import { useAuth } from './AuthContext';
 import './Dashboard.css';
 
-const Dashboard = () => {
+const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     if (window.confirm('Are you sure you want to logout?')) {
       logout();
     }

@@ -1,9 +1,24 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { API_ENDPOINTS } from './api';
 
-const AuthContext = createContext();
+interface User {
+  id: string;
+  email: string;
+}
 
-export const useAuth = () => {
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  signup: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  logout: () => void;
+  isAuthenticated: () => boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
@@ -11,10 +26,14 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Check for existing token on app load
   useEffect(() => {
@@ -23,13 +42,13 @@ export const AuthProvider = ({ children }) => {
 
     if (storedToken && storedUser) {
       setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      setUser(JSON.parse(storedUser) as User);
     }
 
     setIsLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     try {
       const response = await fetch(API_ENDPOINTS.SIGNIN, {
         method: 'POST',
@@ -56,7 +75,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (email, password) => {
+  const signup = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     try {
       const response = await fetch(API_ENDPOINTS.SIGNUP, {
         method: 'POST',

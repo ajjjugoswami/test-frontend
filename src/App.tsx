@@ -6,8 +6,8 @@ import Dashboard from './Dashboard';
 import './App.css';
 
 // Main App Component
-function AppContent() {
-  const [currentView, setCurrentView] = useState('login'); // 'login', 'signup', 'dashboard'
+const AppContent: React.FC = () => {
+  const [currentView, setCurrentView] = useState<'login' | 'signup' | 'dashboard'>('login'); // 'login', 'signup', 'dashboard'
   const { isAuthenticated, isLoading } = useAuth();
 
   // Show loading spinner while checking authentication
@@ -38,12 +38,12 @@ function AppContent() {
 }
 
 // Main App with AuthProvider
-function App() {
+const App: React.FC = () => {
   return (
     <AuthProvider>
       <AppContent />
     </AuthProvider>
   );
-}
+};
 
 export default App;

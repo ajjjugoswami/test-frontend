@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import './Auth.css';
 
-const Login = ({ onSwitchToSignup }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+interface LoginProps {
+  onSwitchToSignup: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onSwitchToSignup }) => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
@@ -17,7 +21,7 @@ const Login = ({ onSwitchToSignup }) => {
     const result = await login(email, password);
 
     if (!result.success) {
-      setMessage(result.message);
+      setMessage(result.message || '');
     }
 
     setIsLoading(false);
@@ -36,7 +40,7 @@ const Login = ({ onSwitchToSignup }) => {
               type="email"
               id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
               disabled={isLoading}
@@ -49,7 +53,7 @@ const Login = ({ onSwitchToSignup }) => {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
               disabled={isLoading}
