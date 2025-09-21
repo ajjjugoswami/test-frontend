@@ -1,16 +1,61 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, message, Space } from 'antd';
 import { UserOutlined, LockOutlined, UserAddOutlined } from '@ant-design/icons';
+import styled from 'styled-components';
 import { useAuth } from '../../hooks/useAuth';
 import { SignupCredentials } from '../../types/auth';
 
 const { Title, Text } = Typography;
 
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  padding: 20px;
+`;
+
+const StyledCard = styled(Card)`
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const HeaderSection = styled.div`
+  text-align: center;
+  margin-bottom: 32px;
+`;
+
+const StyledTitle = styled(Title)`
+  margin-bottom: 8px !important;
+  color: #1a1a1a !important;
+`;
+
+const StyledText = styled(Text)`
+  color: #666 !important;
+`;
+
+const FooterSection = styled.div`
+  text-align: center;
+  margin-top: 24px;
+`;
+
 interface SignupFormProps {
   onSwitchToLogin: () => void;
+  onSignupSuccess?: () => void;
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
+const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin, onSignupSuccess }) => {
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
@@ -20,6 +65,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
       const result = await signup(values);
       if (result.success) {
         message.success(result.message || 'Account created successfully!');
+        onSignupSuccess?.();
         // Clear form
         // The form will be reset automatically since we're not controlling the state
       } else {
@@ -33,24 +79,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    }}>
-      <Card
-        style={{
-          width: 400,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          borderRadius: '12px'
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ marginBottom: 8 }}>Create Account</Title>
-          <Text type="secondary">Sign up to get started</Text>
-        </div>
+    <Container>
+      <StyledCard>
+        <HeaderSection>
+          <StyledTitle level={2}>Create Account</StyledTitle>
+          <StyledText type="secondary">Sign up to get started</StyledText>
+        </HeaderSection>
 
         <Form
           name="signup"
@@ -122,16 +156,16 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
           </Form.Item>
         </Form>
 
-        <div style={{ textAlign: 'center' }}>
+        <FooterSection>
           <Space>
             <Text>Already have an account?</Text>
             <Button type="link" onClick={onSwitchToLogin} style={{ padding: 0 }}>
               Sign In
             </Button>
           </Space>
-        </div>
-      </Card>
-    </div>
+        </FooterSection>
+      </StyledCard>
+    </Container>
   );
 };
 

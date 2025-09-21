@@ -1,11 +1,10 @@
-import React from 'react';
 import { Card, Typography, Row, Col, Statistic, Avatar } from 'antd';
 import { UserOutlined, DashboardOutlined, SettingOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 
 const { Title, Text } = Typography;
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const { user } = useAuth();
 
   return (

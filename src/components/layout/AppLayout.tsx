@@ -1,6 +1,7 @@
 import React from 'react';
 import { Layout, Button } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const { Header, Content, Footer } = Layout;
@@ -11,6 +12,12 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -30,7 +37,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <Button
               type="text"
               icon={<LogoutOutlined />}
-              onClick={logout}
+              onClick={handleLogout}
               style={{ color: 'white' }}
             >
               Logout
