@@ -70,11 +70,11 @@ const ImageEditor: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 5 }}>
+    <Container maxWidth="md" sx={{ py: { xs: 2, md: 5 }, px: { xs: 0, md: 5 } }}>
       <Paper
         elevation={3}
         sx={{
-          p: 4,
+          p: { xs: 2, md: 4 },
           borderRadius: 3,
           mb: 4,
           backgroundColor: "#fff",
@@ -107,12 +107,13 @@ const ImageEditor: React.FC = () => {
           />
         )}
 
-        <Box sx={{ display: "flex", gap: 2, mb: 3, alignItems: "center" }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 2, mb: 3, alignItems: { xs: "stretch", md: "center" } }}>
           <Button
             variant="outlined"
             size="large"
             onClick={() => fileInputRef.current?.click()}
             startIcon={<Upload />}
+            sx={{ width: { xs: "100%", md: "auto" } }}
           >
             Upload Image
           </Button>
@@ -129,6 +130,7 @@ const ImageEditor: React.FC = () => {
             onClick={handleGenerate}
             disabled={loading}
             startIcon={<ImageIcon />}
+            sx={{ width: { xs: "100%", md: "auto" } }}
           >
             {loading ? <CircularProgress size={24} /> : "Generate Image"}
           </Button>
@@ -139,7 +141,7 @@ const ImageEditor: React.FC = () => {
         <Paper
           elevation={3}
           sx={{
-            p: 4,
+            p: { xs: 2, md: 4 },
             borderRadius: 3,
             backgroundColor: "#fff",
             boxShadow: "none",
@@ -150,13 +152,14 @@ const ImageEditor: React.FC = () => {
             component="img"
             image={generatedImage}
             alt="Generated"
-            sx={{ maxHeight: 500, objectFit: "contain" }}
+            sx={{ height: { xs: 300, md: 500 }, objectFit: "contain", width: "100%" }}
           />
           <CardActions>
             <Button
               variant="outlined"
               startIcon={<Download />}
               onClick={handleDownload}
+              sx={{ width: { xs: "100%", md: "auto" } }}
             >
               Download
             </Button>
