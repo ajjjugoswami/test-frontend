@@ -1,5 +1,5 @@
 import { Typography, Box } from "@mui/material";
-import { LayoutDashboard } from "lucide-react";
+import ImageEditor from "./ImageEditor";
 
 const Dashboard = () => {
   return (
@@ -10,8 +10,7 @@ const Dashboard = () => {
           component="h1"
           sx={{ display: "flex", alignItems: "center" }}
         >
-          <LayoutDashboard size={24} style={{ marginRight: 12 }} />
-          Dashboard
+          <ImageEditor />
         </Typography>
       </Box>
     </Box>
