@@ -1,6 +1,6 @@
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 if (!apiKey) {
-  throw new Error('VITE_GOOGLE_API_KEY is not set');
+  throw new Error("VITE_GOOGLE_API_KEY is not set");
 }
 
 export interface ImageGenerationResult {
@@ -12,7 +12,9 @@ export interface ImageGenerationResult {
   };
 }
 
-export async function generateImage(options: any): Promise<ImageGenerationResult> {
+export async function generateImage(
+  options: any
+): Promise<ImageGenerationResult> {
   const { prompt, referenceImage } = options;
 
   const contents: any[] = [];
@@ -42,18 +44,21 @@ export async function generateImage(options: any): Promise<ImageGenerationResult
     });
   }
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents,
-      generationConfig: {
-        responseModalities: ['text', 'image'],
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    }),
-  });
+      body: JSON.stringify({
+        contents,
+        generationConfig: {
+          responseModalities: ["text", "image"],
+        },
+      }),
+    }
+  );
 
   if (!response.ok) {
     throw new Error(`API error: ${response.status} ${response.statusText}`);
@@ -62,7 +67,7 @@ export async function generateImage(options: any): Promise<ImageGenerationResult
   const data = await response.json();
 
   if (!data.candidates || data.candidates.length === 0) {
-    throw new Error('No response from AI');
+    throw new Error("No response from AI");
   }
 
   const parts = data.candidates[0].content.parts;
@@ -75,8 +80,7 @@ export async function generateImage(options: any): Promise<ImageGenerationResult
       usage: data.usageMetadata,
     };
   } else {
-    // If no image, return text
-    const text = parts.map((part: any) => part.text).join('');
+    const text = parts.map((part: any) => part.text).join("");
     return {
       image: text,
       usage: data.usageMetadata,
@@ -89,7 +93,7 @@ async function fileToBase64(file: File): Promise<string> {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      const base64 = result.split(',')[1];
+      const base64 = result.split(",")[1];
       resolve(base64);
     };
     reader.onerror = reject;
