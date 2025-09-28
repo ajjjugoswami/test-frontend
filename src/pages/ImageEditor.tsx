@@ -27,6 +27,7 @@ const ImageEditor: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [usage, setUsage] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const suggestedPrompts = {
@@ -77,7 +78,8 @@ const ImageEditor: React.FC = () => {
         prompt,
         referenceImage: imageFile || undefined,
       });
-      setGeneratedImage(result);
+      setGeneratedImage(result.image);
+      setUsage(result.usage);
       setPrompt("");
       setImageFile(null);
       setUploadedImageUrl(null);
@@ -219,6 +221,11 @@ const ImageEditor: React.FC = () => {
                   Download
                 </Button>
               </CardActions>
+              {usage && (
+                <Typography variant="body2" sx={{ mt: 1, textAlign: 'center' }}>
+                  Tokens used: {usage.totalTokenCount}
+                </Typography>
+              )}
             </Paper>
           )}
         </Box>

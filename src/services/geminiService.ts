@@ -3,12 +3,16 @@ if (!apiKey) {
   throw new Error('VITE_GOOGLE_API_KEY is not set');
 }
 
-export interface ImageGenerationOptions {
-  prompt: string;
-  referenceImage?: File;
+export interface ImageGenerationResult {
+  image: string;
+  usage: {
+    promptTokenCount: number;
+    candidatesTokenCount: number;
+    totalTokenCount: number;
+  };
 }
 
-export async function generateImage(options: ImageGenerationOptions): Promise<string> {
+export async function generateImage(options: any): Promise<ImageGenerationResult> {
   const { prompt, referenceImage } = options;
 
   const contents: any[] = [];
@@ -66,11 +70,17 @@ export async function generateImage(options: ImageGenerationOptions): Promise<st
   if (imagePart) {
     const imageData = imagePart.inlineData.data;
     const mimeType = imagePart.inlineData.mimeType;
-    return `data:${mimeType};base64,${imageData}`;
+    return {
+      image: `data:${mimeType};base64,${imageData}`,
+      usage: data.usageMetadata,
+    };
   } else {
     // If no image, return text
     const text = parts.map((part: any) => part.text).join('');
-    return text;
+    return {
+      image: text,
+      usage: data.usageMetadata,
+    };
   }
 }
 
