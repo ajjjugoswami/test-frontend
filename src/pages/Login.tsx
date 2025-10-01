@@ -14,6 +14,7 @@ import {
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { LoginCredentials } from "../types/auth";
+import { DEFAULT_PRIVATE_PATH } from "../routes";
 
 const Login: React.FC = () => {
   const [credentials, setCredentials] = useState<LoginCredentials>({
@@ -28,7 +29,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || DEFAULT_PRIVATE_PATH;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

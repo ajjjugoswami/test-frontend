@@ -44,4 +44,4 @@ export const privateRoutes: RouteConfig[] = [
  export const allRoutes = [...publicRoutes, ...privateRoutes];
 
 export const DEFAULT_PUBLIC_PATH = '/login';
-export const DEFAULT_PRIVATE_PATH = '/';
+export const DEFAULT_PRIVATE_PATH = '/ai-agent';
