@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-// import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar";
 
 const LayoutContainer = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ interface AppLayoutProps {
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <LayoutContainer>
-      {/* <Sidebar /> */}
+      <Sidebar />
       <MainContent>
          <ContentArea>{children}</ContentArea>
       </MainContent>

@@ -2,6 +2,7 @@ import { ComponentType } from 'react';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import AIComponentAgent from './pages/AIComponentAgent';
 
 export interface RouteConfig {
   path: string;
@@ -30,6 +31,12 @@ export const privateRoutes: RouteConfig[] = [
     path: '/',
     component: Dashboard,
     title: 'Dashboard',
+    requiresAuth: true,
+  },
+  {
+    path: '/ai-agent',
+    component: AIComponentAgent,
+    title: 'AI HTML Generator',
     requiresAuth: true,
   },
 ];
