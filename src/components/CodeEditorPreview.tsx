@@ -6,7 +6,9 @@ import {
   Button,
   IconButton,
   Tooltip,
-   Chip,
+  Chip,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import {
   Code,
@@ -34,6 +36,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   onHtmlChange,
 }) => {
   const [activeView, setActiveView] = useState<'preview' | 'code'>('preview');
+  const [codeTab, setCodeTab] = useState<'html' | 'raw'>('html');
   const [copySuccess, setCopySuccess] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
   const [editedHtml, setEditedHtml] = useState(html.html);
@@ -63,8 +66,9 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
 
   const handleCopyCode = async () => {
     try {
-      await navigator.clipboard.writeText(currentHtml);
-      onCopyCode?.(currentHtml);
+      const textToCopy = codeTab === 'html' ? currentHtml : (html.rawResponse || 'No raw response available');
+      await navigator.clipboard.writeText(textToCopy);
+      onCopyCode?.(textToCopy);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
@@ -235,36 +239,65 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
       {/* Content */}
       <Box sx={{ flex: 1, overflow: 'hidden' }}>
         {activeView === 'code' ? (
-          // Code Editor View
-          <Box sx={{ height: '100%' }}>
-            <Editor
-              height="100%"
-              defaultLanguage="html"
-              value={editedHtml}
-              onChange={handleEditorChange}
-              onMount={onEditorMount}
-              theme="vs"
-              options={{
-                fontSize: 14,
-                lineHeight: 20,
-                wordWrap: 'on',
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-                formatOnPaste: true,
-                formatOnType: true,
-                tabSize: 2,
-                insertSpaces: true,
-                detectIndentation: true,
-                folding: true,
-                lineNumbers: 'on',
-                renderLineHighlight: 'line',
-                cursorBlinking: 'blink',
-                cursorStyle: 'line',
-                renderWhitespace: 'selection',
-                bracketPairColorization: { enabled: true },
-              }}
-            />
+          // Code Editor View with Tabs
+          <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            {/* Code Editor Tabs */}
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: '#f5f5f5' }}>
+              <Tabs 
+                value={codeTab} 
+                onChange={(_, newValue) => setCodeTab(newValue)}
+                variant="fullWidth"
+                sx={{
+                  minHeight: 36,
+                  '& .MuiTab-root': {
+                    minHeight: 36,
+                    fontSize: '0.8rem',
+                    textTransform: 'none',
+                    fontWeight: 500,
+                  }
+                }}
+              >
+                <Tab label="Cleaned HTML" value="html" />
+                <Tab 
+                  label={`Raw API Response ${html.rawResponse ? '' : '(N/A)'}`} 
+                  value="raw" 
+                  disabled={!html.rawResponse}
+                />
+              </Tabs>
+            </Box>
+            
+            {/* Editor Content */}
+            <Box sx={{ flex: 1 }}>
+              <Editor
+                height="100%"
+                defaultLanguage={codeTab === 'html' ? 'html' : 'text'}
+                value={codeTab === 'html' ? editedHtml : (html.rawResponse || 'No raw response available')}
+                onChange={codeTab === 'html' ? handleEditorChange : undefined}
+                onMount={onEditorMount}
+                theme="vs"
+                options={{
+                  fontSize: 14,
+                  lineHeight: 20,
+                  wordWrap: 'on',
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                  tabSize: 2,
+                  insertSpaces: true,
+                  detectIndentation: true,
+                  folding: true,
+                  lineNumbers: 'on',
+                  renderLineHighlight: 'line',
+                  cursorBlinking: 'blink',
+                  cursorStyle: 'line',
+                  renderWhitespace: 'selection',
+                  bracketPairColorization: { enabled: true },
+                  readOnly: codeTab === 'raw',
+                }}
+              />
+            </Box>
           </Box>
         ) : (
           // Live Preview View
@@ -324,8 +357,13 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
           {html.description}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {currentHtml.length} characters • {currentHtml.split('\n').length} lines
-          {hasChanges && ' • Modified'}
+          {activeView === 'code' && codeTab === 'raw' ? (
+            html.rawResponse ? 
+              `${html.rawResponse.length} characters • ${html.rawResponse.split('\n').length} lines • Raw API Response` :
+              'No raw response available'
+          ) : (
+            `${currentHtml.length} characters • ${currentHtml.split('\n').length} lines${hasChanges ? ' • Modified' : ''}`
+          )}
         </Typography>
       </Box>
     </Box>

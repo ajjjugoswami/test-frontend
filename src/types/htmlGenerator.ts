@@ -2,6 +2,7 @@ export interface GeneratedHTML {
   id: string;
   name: string;
   html: string;
+  rawResponse?: string;
   description: string;
   features: string[];
   createdAt: Date;

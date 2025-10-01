@@ -6,6 +6,7 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_API_KEY || '');
 
 class HTMLGenerator {
   private config: HTMLGeneratorConfig;
+  private lastRawResponse?: string;
 
   constructor(config?: Partial<HTMLGeneratorConfig>) {
     this.config = {
@@ -60,6 +61,7 @@ class HTMLGenerator {
         id: this.generateId(),
         name: requirements.name,
         html: generatedHTML,
+        rawResponse: this.lastRawResponse,
         description: input.description,
         features: this.extractFeatures(generatedHTML, requirements),
         createdAt: new Date(),
@@ -183,7 +185,11 @@ IMPORTANT:
 Generate the complete HTML file:`;
 
     const result = await model.generateContent(prompt);
-    let htmlCode = result.response.text();
+    const rawResponse = result.response.text();
+    let htmlCode = rawResponse;
+    
+    // Store raw response for debugging
+    this.lastRawResponse = rawResponse;
     
     // Clean up the response
     htmlCode = htmlCode.replace(/```html\n?/g, '').replace(/```/g, '').trim();
@@ -237,10 +243,15 @@ IMPORTANT:
 
 Generate the complete HTML file:`;
 
-    return await perplexityService.generateHTML(prompt, this.config.model, {
+    const result = await perplexityService.generateHTML(prompt, this.config.model, {
       temperature: this.config.temperature,
       max_tokens: this.config.maxTokens,
     });
+    
+    // Store the raw response (for Perplexity, this is already cleaned)
+    this.lastRawResponse = result;
+    
+    return result;
   }
 
   private getFrameworkInstructions(framework: HTMLRequirements['framework']): string {
