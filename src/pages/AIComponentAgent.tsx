@@ -94,7 +94,6 @@ const AIComponentAgent: React.FC = () => {
   });
 
   // Services - will be recreated when config changes
-  const getGenerator = () => new HTMLGenerator(aiConfig);
   // Figma service would be initialized here when needed
 
   // Refs
@@ -886,15 +885,16 @@ const AIComponentAgent: React.FC = () => {
               </TabPanel>
             </Box>
             
-            {/* Generate Button at Bottom */}
-            <Box sx={{ p: 2.5, pt: 1, borderTop: '1px solid #f1f5f9' }}>
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={<AutoAwesome size={20} />}
-                onClick={generateHTML}
-                disabled={isGenerating}
-                fullWidth
+            {/* Generate Button at Bottom - Hidden on Config tab */}
+            {activeTab !== 3 && (
+              <Box sx={{ p: 2.5, pt: 1, borderTop: '1px solid #f1f5f9' }}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  startIcon={<AutoAwesome size={20} />}
+                  onClick={generateHTML}
+                  disabled={isGenerating}
+                  fullWidth
                 sx={{ 
                   py: 1.2,
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -967,6 +967,7 @@ const AIComponentAgent: React.FC = () => {
                 </Alert>
               )}
             </Box>
+            )}
           </Box>
         </Paper>
         
