@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GeneratedHTML, HTMLInput, HTMLRequirements, HTMLGeneratorConfig } from '../types/htmlGenerator';
+import PerplexityService from './perplexityService';
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_API_KEY || '');
 
@@ -8,6 +9,7 @@ class HTMLGenerator {
 
   constructor(config?: Partial<HTMLGeneratorConfig>) {
     this.config = {
+      provider: 'google',
       model: 'gemini-2.0-flash-exp',
       temperature: 0.7,
       maxTokens: 4000,
@@ -21,7 +23,12 @@ class HTMLGenerator {
   }
 
   private isConfigured(): boolean {
-    return Boolean(import.meta.env.VITE_GOOGLE_API_KEY);
+    if (this.config.provider === 'google') {
+      return Boolean(import.meta.env.VITE_GOOGLE_API_KEY);
+    } else if (this.config.provider === 'perplexity') {
+      return Boolean(import.meta.env.VITE_PERPLEXITY_API_KEY);
+    }
+    return false;
   }
 
   async generateHTML(
@@ -122,6 +129,14 @@ class HTMLGenerator {
   }
 
   private async generateCode(context: string, requirements: HTMLRequirements): Promise<string> {
+    if (this.config.provider === 'perplexity') {
+      return this.generateWithPerplexity(context, requirements);
+    } else {
+      return this.generateWithGoogle(context, requirements);
+    }
+  }
+
+  private async generateWithGoogle(context: string, requirements: HTMLRequirements): Promise<string> {
     const model = genAI.getGenerativeModel({ 
       model: this.config.model,
       generationConfig: {
@@ -181,6 +196,51 @@ Generate the complete HTML file:`;
     }
     
     return htmlCode;
+  }
+
+  private async generateWithPerplexity(context: string, requirements: HTMLRequirements): Promise<string> {
+    const perplexityService = new PerplexityService();
+    const frameworkInstructions = this.getFrameworkInstructions(requirements.framework);
+
+    const prompt = `You are an expert web developer. Create a complete, standalone HTML file based on the following requirements:
+
+CONTEXT:
+${context}
+
+REQUIREMENTS:
+- Page/Component name: ${requirements.name}
+- Framework: ${requirements.framework}
+- Responsive design: ${requirements.responsive}
+- Include animations: ${requirements.animations}
+- Interactive elements: ${requirements.interactive}
+
+TECHNICAL REQUIREMENTS:
+- Create ONE complete HTML file with everything inline
+- Include ALL CSS in <style> tags in the <head>
+- Include ALL JavaScript in <script> tags (if needed)
+- Use semantic HTML5 elements
+- Ensure the page is fully functional and self-contained
+- Add proper meta tags for responsive design
+${requirements.responsive ? '- Implement responsive design with CSS media queries' : ''}
+${requirements.animations ? '- Include smooth CSS animations and transitions' : ''}
+${requirements.interactive ? '- Add JavaScript for interactive functionality' : ''}
+
+FRAMEWORK INSTRUCTIONS:
+${frameworkInstructions}
+
+IMPORTANT: 
+- Return ONLY the complete HTML code, no explanations
+- Everything must be in ONE file (no external dependencies except CDN links if absolutely necessary)  
+- Use modern HTML5, CSS3, and vanilla JavaScript
+- Ensure the code is clean, well-commented, and production-ready
+- Add proper doctype, lang attribute, and meta tags
+
+Generate the complete HTML file:`;
+
+    return await perplexityService.generateHTML(prompt, this.config.model, {
+      temperature: this.config.temperature,
+      max_tokens: this.config.maxTokens,
+    });
   }
 
   private getFrameworkInstructions(framework: HTMLRequirements['framework']): string {

@@ -34,6 +34,7 @@ import {
 } from '../types/htmlGenerator';
 import HTMLGenerator from '../services/htmlGenerator';
 import CodeEditorPreview from '../components/CodeEditorPreview';
+import { AI_PROVIDERS, getModelsByProvider, isProviderConfigured } from '../constants/aiProviders';
  
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,15 +85,16 @@ const AIComponentAgent: React.FC = () => {
   });
 
   // AI configuration
-  const [aiConfig] = useState<HTMLGeneratorConfig>({
+  const [aiConfig, setAiConfig] = useState<HTMLGeneratorConfig>({
+    provider: 'google',
     model: 'gemini-2.0-flash-exp',
     temperature: 0.7,
     maxTokens: 4000,
     framework: 'vanilla'
   });
 
-  // Services
-  const [generator] = useState(() => new HTMLGenerator(aiConfig));
+  // Services - will be recreated when config changes
+  const getGenerator = () => new HTMLGenerator(aiConfig);
   // Figma service would be initialized here when needed
 
   // Refs
@@ -209,7 +211,7 @@ const AIComponentAgent: React.FC = () => {
     textDescription,
     requirements,
     componentRequirements,
-    generator
+    aiConfig
   ]);
 
   const handleSaveHTML = useCallback((html: GeneratedHTML) => {
@@ -641,6 +643,95 @@ const AIComponentAgent: React.FC = () => {
                     }}
                   />
                   
+                  <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mt: 1, mb: 0.5 }}>
+                    AI Configuration
+                  </Typography>
+                  
+                  <FormControl fullWidth size="small">
+                  
+                    <Select
+                      value={aiConfig.provider}
+                      onChange={(e) => {
+                        const newProvider = e.target.value as 'google' | 'perplexity';
+                        const availableModels = getModelsByProvider(newProvider);
+                        const defaultModel = availableModels.length > 0 ? availableModels[0].id : '';
+                        setAiConfig(prev => ({
+                          ...prev,
+                          provider: newProvider,
+                          model: defaultModel
+                        }));
+                      }}
+                      sx={{
+                        borderRadius: '6px',
+                        backgroundColor: '#f8fafc',
+                        fontSize: '0.875rem',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#e2e8f0',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#667eea',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#667eea',
+                          borderWidth: '2px',
+                        },
+                      }}
+                    >
+                      {AI_PROVIDERS.map(provider => (
+                        <MenuItem 
+                          key={provider.id} 
+                          value={provider.id}
+                          disabled={!isProviderConfigured(provider.id)}
+                        >
+                          {provider.name} {!isProviderConfigured(provider.id) && '(Not Configured)'}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  
+                  <FormControl fullWidth size="small">
+                    
+                    <Select
+                      value={aiConfig.model}
+                      onChange={(e) => setAiConfig(prev => ({
+                        ...prev,
+                        model: e.target.value
+                      }))}
+                      sx={{
+                        borderRadius: '6px',
+                        backgroundColor: '#f8fafc',
+                        fontSize: '0.875rem',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#e2e8f0',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#667eea',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#667eea',
+                          borderWidth: '2px',
+                        },
+                      }}
+                    >
+                      {getModelsByProvider(aiConfig.provider).map(model => (
+                        <MenuItem key={model.id} value={model.id}>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              {model.name}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#64748b' }}>
+                              {model.description}
+                            </Typography>
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  
+                  <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mt: 1, mb: 0.5 }}>
+                    HTML Framework
+                  </Typography>
+                  
                   <FormControl fullWidth size="small">
                     
                     <Select
@@ -760,6 +851,36 @@ const AIComponentAgent: React.FC = () => {
                       label="JavaScript Interactions"
                       sx={{ '& .MuiFormControlLabel-label': { color: '#64748b', fontWeight: 500, fontSize: '0.875rem' } }}
                     />
+                  </Box>
+                  
+                  <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mt: 2, mb: 0.5 }}>
+                    API Status
+                  </Typography>
+                  
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8, pl: 1 }}>
+                    {AI_PROVIDERS.map(provider => (
+                      <Box key={provider.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            backgroundColor: isProviderConfigured(provider.id) ? '#10b981' : '#ef4444',
+                          }}
+                        />
+                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                          {provider.name}: {isProviderConfigured(provider.id) ? 'Configured' : 'Not Configured'}
+                        </Typography>
+                      </Box>
+                    ))}
+                    
+                    {!isProviderConfigured('google') && !isProviderConfigured('perplexity') && (
+                      <Alert severity="warning" sx={{ mt: 1, fontSize: '0.75rem' }}>
+                        <Typography variant="caption">
+                          No AI providers configured. Please add VITE_GOOGLE_API_KEY or VITE_PERPLEXITY_API_KEY to your .env file.
+                        </Typography>
+                      </Alert>
+                    )}
                   </Box>
                 </Box>
               </TabPanel>

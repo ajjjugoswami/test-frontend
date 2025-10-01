@@ -30,11 +30,24 @@ export interface HTMLRequirements {
 }
 
 export interface HTMLGeneratorConfig {
+  provider: 'google' | 'perplexity';
   model: string;
   temperature: number;
   maxTokens: number;
   framework: 'vanilla' | 'bootstrap' | 'tailwind';
   onProgress?: (phase: string, message: string, progress: number) => void;
+}
+
+export interface AIProvider {
+  id: 'google' | 'perplexity';
+  name: string;
+  models: AIModel[];
+}
+
+export interface AIModel {
+  id: string;
+  name: string;
+  description: string;
 }
 
 export interface GenerationProgress {
