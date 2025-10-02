@@ -168,7 +168,19 @@ const AIComponentAgent: React.FC = () => {
 
     // Prepare input based on active tab
     switch (activeTab) {
-      case 0: // Figma
+      case 0: // Text
+        if (!textDescription.trim()) {
+          setError("Please enter a description");
+          return;
+        }
+        input = {
+          type: "text",
+          description: textDescription,
+          requirements: requirements.filter((r) => r.trim()),
+        };
+        break;
+
+      case 1: // Figma
         if (!figmaUrl.trim()) {
           setError("Please enter a Figma URL");
           return;
@@ -180,7 +192,7 @@ const AIComponentAgent: React.FC = () => {
         };
         break;
 
-      case 1: // Image
+      case 2: // Image
         if (!selectedImage) {
           setError("Please select an image");
           return;
@@ -189,18 +201,6 @@ const AIComponentAgent: React.FC = () => {
           type: "image",
           file: selectedImage,
           description: imageDescription,
-        };
-        break;
-
-      case 2: // Text
-        if (!textDescription.trim()) {
-          setError("Please enter a description");
-          return;
-        }
-        input = {
-          type: "text",
-          description: textDescription,
-          requirements: requirements.filter((r) => r.trim()),
         };
         break;
 
@@ -393,197 +393,14 @@ const AIComponentAgent: React.FC = () => {
                   },
                 }}
               >
+                <Tab icon={<Description size={16} />} label="Text" />
                 <Tab icon={<LinkIcon size={16} />} label="Figma" />
                 <Tab icon={<Upload size={16} />} label="Image" />
-                <Tab icon={<Description size={16} />} label="Text" />
                 <Tab icon={<Settings size={16} />} label="Config" />
               </Tabs>
 
-              {/* Figma Input */}
-              <TabPanel value={activeTab} index={0}>
-                <Box
-                  sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}
-                >
-                  <TextField
-                    fullWidth
-                    size="medium"
-                    label="Figma URL"
-                    placeholder="https://www.figma.com/file/..."
-                    value={figmaUrl}
-                    onChange={(e) => setFigmaUrl(e.target.value)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "6px",
-                        backgroundColor: theme.palette.background.paper,
-                        fontSize: "0.875rem",
-                        "& fieldset": {
-                          borderColor: theme.palette.divider,
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#667eea",
-                        },
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
-                          borderWidth: "2px",
-                        },
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: theme.palette.text.secondary,
-                        fontSize: "0.875rem",
-                        "&.Mui-focused": {
-                          color: "#667eea",
-                        },
-                      },
-                    }}
-                  />
-                  <TextField
-                    fullWidth
-                    size="medium"
-                    label="Figma Access Token (Optional)"
-                    placeholder="For detailed analysis"
-                    value={figmaToken}
-                    onChange={(e) => setFigmaToken(e.target.value)}
-                    helperText="Get token from Figma Settings > Account > Personal access tokens"
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "6px",
-                        backgroundColor: theme.palette.background.paper,
-                        fontSize: "0.875rem",
-                        "& fieldset": {
-                          borderColor: theme.palette.divider,
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#667eea",
-                        },
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
-                          borderWidth: "2px",
-                        },
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: theme.palette.text.secondary,
-                        fontSize: "0.875rem",
-                        "&.Mui-focused": {
-                          color: "#667eea",
-                        },
-                      },
-                      "& .MuiFormHelperText-root": {
-                        color: theme.palette.text.secondary,
-                        fontSize: "0.75rem",
-                      },
-                    }}
-                  />
-                </Box>
-              </TabPanel>
-
-              {/* Image Input */}
-              <TabPanel value={activeTab} index={1}>
-                <Box
-                  sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                  />
-                  <Button
-                    variant="outlined"
-                    startIcon={<Upload size={20} />}
-                    onClick={() => fileInputRef.current?.click()}
-                    fullWidth
-                    sx={{
-                      borderRadius: "8px",
-                      borderColor: theme.palette.divider,
-                      color: theme.palette.text.secondary,
-                      textTransform: "none",
-                      fontWeight: 600,
-                      py: 1.5,
-                      "&:hover": {
-                        borderColor: "#667eea",
-                        color: "#667eea",
-                        backgroundColor: theme.palette.action.hover,
-                      },
-                    }}
-                  >
-                    {selectedImage ? selectedImage.name : "Upload Image"}
-                  </Button>
-                  {selectedImage && (
-                    <Paper
-                      sx={{
-                        p: 2.5,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        borderRadius: "8px",
-                        border: `1px solid ${theme.palette.divider}`,
-                        backgroundColor: theme.palette.background.paper,
-                        boxShadow: "none",
-                      }}
-                    >
-                      <img
-                        src={URL.createObjectURL(selectedImage)}
-                        alt="Preview"
-                        style={{
-                          width: 60,
-                          height: 60,
-                          objectFit: "cover",
-                          borderRadius: 8,
-                        }}
-                      />
-                      <Box sx={{ flex: 1 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{ fontWeight: 600, color: theme.palette.text.primary }}
-                        >
-                          {selectedImage.name}
-                        </Typography>
-                        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                          {(selectedImage.size / 1024 / 1024).toFixed(1)} MB
-                        </Typography>
-                      </Box>
-                    </Paper>
-                  )}
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={2}
-                    size="small"
-                    label="Additional Description (Optional)"
-                    placeholder="Describe specific aspects of the design..."
-                    value={imageDescription}
-                    onChange={(e) => setImageDescription(e.target.value)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "6px",
-                        backgroundColor: theme.palette.background.paper,
-                        fontSize: "0.875rem",
-                        "& fieldset": {
-                          borderColor: theme.palette.divider,
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#667eea",
-                        },
-                        "&.Mui-focused fieldset": {
-                          borderColor: "#667eea",
-                          borderWidth: "2px",
-                        },
-                      },
-                      "& .MuiInputLabel-root": {
-                        color: theme.palette.text.secondary,
-                        fontSize: "0.875rem",
-                        "&.Mui-focused": {
-                          color: "#667eea",
-                        },
-                      },
-                    }}
-                  />
-                </Box>
-              </TabPanel>
-
               {/* Text Input */}
-              <TabPanel value={activeTab} index={2}>
+              <TabPanel value={activeTab} index={0}>
                 <Box
                   sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
                 >
@@ -711,6 +528,189 @@ const AIComponentAgent: React.FC = () => {
                   >
                     Add Requirement
                   </Button>
+                </Box>
+              </TabPanel>
+
+              {/* Figma Input */}
+              <TabPanel value={activeTab} index={1}>
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 3.5 }}
+                >
+                  <TextField
+                    fullWidth
+                    size="medium"
+                    label="Figma URL"
+                    placeholder="https://www.figma.com/file/..."
+                    value={figmaUrl}
+                    onChange={(e) => setFigmaUrl(e.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "6px",
+                        backgroundColor: theme.palette.background.paper,
+                        fontSize: "0.875rem",
+                        "& fieldset": {
+                          borderColor: theme.palette.divider,
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#667eea",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#667eea",
+                          borderWidth: "2px",
+                        },
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme.palette.text.secondary,
+                        fontSize: "0.875rem",
+                        "&.Mui-focused": {
+                          color: "#667eea",
+                        },
+                      },
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    size="medium"
+                    label="Figma Access Token (Optional)"
+                    placeholder="For detailed analysis"
+                    value={figmaToken}
+                    onChange={(e) => setFigmaToken(e.target.value)}
+                    helperText="Get token from Figma Settings > Account > Personal access tokens"
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "6px",
+                        backgroundColor: theme.palette.background.paper,
+                        fontSize: "0.875rem",
+                        "& fieldset": {
+                          borderColor: theme.palette.divider,
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#667eea",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#667eea",
+                          borderWidth: "2px",
+                        },
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme.palette.text.secondary,
+                        fontSize: "0.875rem",
+                        "&.Mui-focused": {
+                          color: "#667eea",
+                        },
+                      },
+                      "& .MuiFormHelperText-root": {
+                        color: theme.palette.text.secondary,
+                        fontSize: "0.75rem",
+                      },
+                    }}
+                  />
+                </Box>
+              </TabPanel>
+
+              {/* Image Input */}
+              <TabPanel value={activeTab} index={2}>
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                  />
+                  <Button
+                    variant="outlined"
+                    startIcon={<Upload size={20} />}
+                    onClick={() => fileInputRef.current?.click()}
+                    fullWidth
+                    sx={{
+                      borderRadius: "8px",
+                      borderColor: theme.palette.divider,
+                      color: theme.palette.text.secondary,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      py: 1.5,
+                      "&:hover": {
+                        borderColor: "#667eea",
+                        color: "#667eea",
+                        backgroundColor: theme.palette.action.hover,
+                      },
+                    }}
+                  >
+                    {selectedImage ? selectedImage.name : "Upload Image"}
+                  </Button>
+                  {selectedImage && (
+                    <Paper
+                      sx={{
+                        p: 2.5,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        borderRadius: "8px",
+                        border: `1px solid ${theme.palette.divider}`,
+                        backgroundColor: theme.palette.background.paper,
+                        boxShadow: "none",
+                      }}
+                    >
+                      <img
+                        src={URL.createObjectURL(selectedImage)}
+                        alt="Preview"
+                        style={{
+                          width: 60,
+                          height: 60,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                        }}
+                      />
+                      <Box sx={{ flex: 1 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontWeight: 600, color: theme.palette.text.primary }}
+                        >
+                          {selectedImage.name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
+                          {(selectedImage.size / 1024 / 1024).toFixed(1)} MB
+                        </Typography>
+                      </Box>
+                    </Paper>
+                  )}
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={2}
+                    size="small"
+                    label="Additional Description (Optional)"
+                    placeholder="Describe specific aspects of the design..."
+                    value={imageDescription}
+                    onChange={(e) => setImageDescription(e.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "6px",
+                        backgroundColor: theme.palette.background.paper,
+                        fontSize: "0.875rem",
+                        "& fieldset": {
+                          borderColor: theme.palette.divider,
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#667eea",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#667eea",
+                          borderWidth: "2px",
+                        },
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme.palette.text.secondary,
+                        fontSize: "0.875rem",
+                        "&.Mui-focused": {
+                          color: "#667eea",
+                        },
+                      },
+                    }}
+                  />
                 </Box>
               </TabPanel>
 

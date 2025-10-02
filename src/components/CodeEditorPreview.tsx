@@ -10,6 +10,7 @@ import {
   Chip,
   Tabs,
   Tab,
+  useTheme,
 } from '@mui/material';
 import {
   Code,
@@ -41,6 +42,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   onHtmlChange,
   isGenerating = false,
 }) => {
+  const theme = useTheme();
   const [activeView, setActiveView] = useState<'preview' | 'code'>('preview');
   const [codeTab, setCodeTab] = useState<'html' | 'react' | 'raw'>('html');
   const [copySuccess, setCopySuccess] = useState(false);
@@ -201,8 +203,8 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
         alignItems: 'center', 
         justifyContent: 'space-between',
         p: 2,
-        borderBottom: '1px solid #e0e0e0',
-        backgroundColor: '#fafafa'
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme.palette.background.paper
       }}>
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
@@ -230,8 +232,8 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                 size="small" 
                 onClick={() => setActiveView('preview')}
                 sx={{ 
-                  backgroundColor: activeView === 'preview' ? '#e3f2fd' : 'transparent',
-                  '&:hover': { backgroundColor: '#f5f5f5' }
+                  backgroundColor: activeView === 'preview' ? theme.palette.action.selected : 'transparent',
+                  '&:hover': { backgroundColor: theme.palette.action.hover }
                 }}
               >
                 <Eye size={16} />
@@ -251,8 +253,8 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   }, 200);
                 }}
                 sx={{ 
-                  backgroundColor: activeView === 'code' ? '#e3f2fd' : 'transparent',
-                  '&:hover': { backgroundColor: '#f5f5f5' }
+                  backgroundColor: activeView === 'code' ? theme.palette.action.selected : 'transparent',
+                  '&:hover': { backgroundColor: theme.palette.action.hover }
                 }}
               >
                 <Code size={16} />
@@ -310,7 +312,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
           // Code Editor View with Tabs
           <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Code Editor Tabs */}
-            <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: '#f5f5f5' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: theme.palette.background.paper }}>
               <Tabs 
                 value={codeTab} 
                 onChange={(_, newValue) => {
@@ -368,7 +370,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                 value={currentEditorContent}
                 onChange={codeTab === 'html' ? handleEditorChange : undefined}
                 onMount={codeTab === 'html' ? onEditorMount : undefined}
-                theme="vs"
+                theme={theme.palette.mode === 'dark' ? 'vs-dark' : 'vs'}
                 options={{
                   fontSize: 14,
                   lineHeight: 20,
@@ -401,7 +403,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
                     backdropFilter: 'blur(2px)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -431,7 +433,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                     variant="h6"
                     sx={{
                       mt: 2,
-                      color: '#666',
+                      color: theme.palette.text.primary,
                       fontWeight: 500,
                       textAlign: 'center'
                     }}
@@ -442,7 +444,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                     variant="body2"
                     sx={{
                       mt: 1,
-                      color: '#999',
+                      color: theme.palette.text.secondary,
                       textAlign: 'center'
                     }}
                   >
@@ -458,18 +460,18 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
             height: '100%', 
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '#fff'
+            backgroundColor: theme.palette.background.default
           }}>
             <Box sx={{ 
               p: 1, 
-              backgroundColor: '#f5f5f5', 
-              borderBottom: '1px solid #e0e0e0',
+              backgroundColor: theme.palette.background.paper, 
+              borderBottom: `1px solid ${theme.palette.divider}`,
               display: 'flex',
               alignItems: 'center',
               gap: 1
             }}>
               <Eye size={14} />
-              <Typography variant="caption" sx={{ fontWeight: 600, color: '#666' }}>
+              <Typography variant="caption" sx={{ fontWeight: 600, color: theme.palette.text.secondary }}>
                 Live Preview
               </Typography>
               {hasChanges && (
@@ -488,7 +490,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   width: '100%',
                   height: '100%',
                   border: 'none',
-                  backgroundColor: 'white',
+                  backgroundColor: theme.palette.background.default,
                   filter: isGenerating ? 'blur(4px)' : 'none',
                   transition: 'filter 0.3s ease-in-out'
                 }}
@@ -510,7 +512,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
                     backdropFilter: 'blur(2px)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -540,7 +542,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                     variant="h6"
                     sx={{
                       mt: 2,
-                      color: '#666',
+                      color: theme.palette.text.primary,
                       fontWeight: 500,
                       textAlign: 'center'
                     }}
@@ -551,7 +553,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                     variant="body2"
                     sx={{
                       mt: 1,
-                      color: '#999',
+                      color: theme.palette.text.secondary,
                       textAlign: 'center'
                     }}
                   >
@@ -567,8 +569,8 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
       {/* Footer Info */}
       <Box sx={{ 
         p: 1, 
-        backgroundColor: '#f5f5f5', 
-        borderTop: '1px solid #e0e0e0',
+        backgroundColor: theme.palette.background.paper, 
+        borderTop: `1px solid ${theme.palette.divider}`,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'

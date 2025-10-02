@@ -191,29 +191,7 @@ const Sidebar: React.FC = () => {
             background: theme.palette.background.paper,
           }}
         >
-          <Box
-            sx={{
-              fontWeight: 700,
-              fontSize: "1.2rem",
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            🚀 AI Studio
-          </Box>
-          <Box
-            sx={{
-              fontSize: "0.85rem",
-              color: theme.palette.text.secondary,
-              mt: 0.5,
-              fontWeight: 500,
-            }}
-          >
-            Build with AI
-          </Box>
+         
         </Box>
 
         {/* Navigation Menu */}
