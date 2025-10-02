@@ -35,6 +35,7 @@ import {
 import HTMLGenerator from "../services/htmlGenerator";
 import CodeEditorPreview from "../components/CodeEditorPreview";
 import QuickTipsModal from "../components/QuickTipsModal";
+import AdsSection from "../components/AdsSection";
 import {
   AI_PROVIDERS,
   getModelsByProvider,
@@ -1214,27 +1215,39 @@ const AIComponentAgent: React.FC = () => {
               sx={{
                 flex: 1,
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 color: "text.secondary",
-                flexDirection: "column",
-                gap: 2,
+                gap: 3,
+                p: 4,
+                overflow: "auto",
               }}
             >
-              <AutoAwesome size={48} style={{ opacity: 0.3 }} />
-              <Typography variant="h6">Generate Code to see preview</Typography>
-              <Typography variant="body2">
-                Choose an input method and click Generate Code
-              </Typography>
+              {/* Generate prompt section */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 2,
+                  mb: 4,
+                }}
+              >
+                <AutoAwesome size={48} style={{ opacity: 0.3 }} />
+                <Typography variant="h6">Generate Code to see preview</Typography>
+                <Typography variant="body2">
+                  Choose an input method and click Generate Code
+                </Typography>
 
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => {
-                  const testHTML: GeneratedHTML = {
-                    id: "test-sample",
-                    name: "SampleCard",
-                    html: `<!DOCTYPE html>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
+                    const testHTML: GeneratedHTML = {
+                      id: "test-sample",
+                      name: "SampleCard",
+                      html: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1365,8 +1378,12 @@ const AIComponentAgent: React.FC = () => {
                 }}
                 sx={{ mt: 2 }}
               >
-                Try Sample HTML
+                Try Sample Preview
               </Button>
+              </Box>
+
+              {/* Ads Section */}
+              <AdsSection />
             </Box>
           )}
         </Box>
