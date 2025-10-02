@@ -7,7 +7,6 @@ import {
   TextField,
   Button,
   Alert,
-  LinearProgress,
   FormControl,
   Select,
   MenuItem,
@@ -72,6 +71,7 @@ const AIComponentAgent: React.FC = () => {
   );
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress | null>(null);
+  console.log(progress)
   const [error, setError] = useState<string | null>(null);
   const [quickTipsModalOpen, setQuickTipsModalOpen] = useState(false);
 
