@@ -1147,44 +1147,7 @@ const AIComponentAgent: React.FC = () => {
                   {isGenerating ? "Generating..." : "Generate Code"}
                 </Button>
 
-                {/* Generation Progress */}
-                {(isGenerating || progress) && (
-                  <Box
-                    sx={{
-                      mt: 2,
-                      p: 2,
-                      backgroundColor: "#f1f5f9",
-                      borderRadius: "6px",
-                      border: "1px solid #e2e8f0",
-                    }}
-                  >
-                    <Typography
-                      variant="caption"
-                      gutterBottom
-                      sx={{
-                        color: "#64748b",
-                        fontWeight: 500,
-                        display: "block",
-                      }}
-                    >
-                      {progress?.message || "Initializing..."}
-                    </Typography>
-                    <LinearProgress
-                      variant={progress ? "determinate" : "indeterminate"}
-                      value={progress?.progress || 0}
-                      sx={{
-                        height: 4,
-                        borderRadius: 2,
-                        backgroundColor: "#e2e8f0",
-                        "& .MuiLinearProgress-bar": {
-                          backgroundColor: "#667eea",
-                          borderRadius: 2,
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-
+           
                 {/* Error Display */}
                 {error && (
                   <Alert
@@ -1220,9 +1183,22 @@ const AIComponentAgent: React.FC = () => {
             backgroundColor: "#ffffff",
           }}
         >
-          {generatedHTML ? (
+          {generatedHTML || isGenerating ? (
             <CodeEditorPreview
-              html={generatedHTML}
+              html={generatedHTML || {
+                id: "generating",
+                name: "Generating...",
+                html: "",
+                description: "Generating component...",
+                features: [],
+                createdAt: new Date(),
+                metadata: {
+                  inputType: "text",
+                  originalInput: { type: "text", description: "" },
+                  aiModel: "AI Generator",
+                  generationTime: 0,
+                },
+              }}
               reactFramework={componentRequirements.reactFramework}
               onDownload={handleSaveHTML}
               onCopyCode={(code) => console.log("Code copied:", code)}

@@ -293,13 +293,13 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
           </Tooltip>
           
           <Button
-            variant="contained"
+            variant="outlined"
             size="small"
             startIcon={<Download size={14} />}
             onClick={handleDownload}
-            sx={{ ml: 1 }}
+            sx={{ ml: 1 ,boxShadow: 'none', textTransform: 'none'}}
           >
-            Download HTML
+            Download Code
           </Button>
         </Box>
       </Box>
