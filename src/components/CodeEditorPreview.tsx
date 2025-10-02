@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Editor from '@monaco-editor/react';
+import Lottie from 'lottie-react';
 import {
   Box,
   Typography,
@@ -21,6 +22,7 @@ import {
   Edit3,
 } from 'lucide-react';
 import { GeneratedHTML } from '../types/htmlGenerator';
+import generatingAnimation from './animations/generating.json';
 
 interface CodeEditorPreviewProps {
   html: GeneratedHTML;
@@ -28,6 +30,7 @@ interface CodeEditorPreviewProps {
   onDownload?: (html: GeneratedHTML) => void;
   onCopyCode?: (code: string) => void;
   onHtmlChange?: (newHtml: string) => void;
+  isGenerating?: boolean;
 }
 
 const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
@@ -36,6 +39,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   onDownload,
   onCopyCode,
   onHtmlChange,
+  isGenerating = false,
 }) => {
   const [activeView, setActiveView] = useState<'preview' | 'code'>('preview');
   const [codeTab, setCodeTab] = useState<'html' | 'react' | 'raw'>('html');
@@ -352,7 +356,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
             </Box>
             
             {/* Editor Content */}
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, position: 'relative' }}>
               <Editor
                 key={`editor-${codeTab}`} // Force re-render when switching tabs
                 height="100%"
@@ -387,6 +391,65 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   readOnly: codeTab !== 'html', // Only HTML is editable, React and Raw are read-only
                 }}
               />
+              
+              {/* Loading Overlay for Code Editor */}
+              {isGenerating && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(2px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    transition: 'all 0.3s ease-in-out'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Lottie
+                      animationData={generatingAnimation}
+                      loop={true}
+                      autoplay={true}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mt: 2,
+                      color: '#666',
+                      fontWeight: 500,
+                      textAlign: 'center'
+                    }}
+                  >
+                    Generating Code...
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 1,
+                      color: '#999',
+                      textAlign: 'center'
+                    }}
+                  >
+                    Please wait while we create your component
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Box>
         ) : (
@@ -425,7 +488,9 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   width: '100%',
                   height: '100%',
                   border: 'none',
-                  backgroundColor: 'white'
+                  backgroundColor: 'white',
+                  filter: isGenerating ? 'blur(4px)' : 'none',
+                  transition: 'filter 0.3s ease-in-out'
                 }}
                 sandbox="allow-scripts allow-same-origin allow-forms"
                 onLoad={() => {
@@ -435,6 +500,65 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   }
                 }}
               />
+              
+              {/* Loading Overlay */}
+              {isGenerating && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    backdropFilter: 'blur(2px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    transition: 'all 0.3s ease-in-out'
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Lottie
+                      animationData={generatingAnimation}
+                      loop={true}
+                      autoplay={true}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      mt: 2,
+                      color: '#666',
+                      fontWeight: 500,
+                      textAlign: 'center'
+                    }}
+                  >
+                    Generating Code...
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      mt: 1,
+                      color: '#999',
+                      textAlign: 'center'
+                    }}
+                  >
+                    Please wait while we create your component
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Box>
         )}

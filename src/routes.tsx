@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
+// import Dashboard from './pages/Dashboard';
 import AIComponentAgent from './pages/AIComponentAgent';
 
 export interface RouteConfig {
@@ -29,16 +29,22 @@ export const publicRoutes: RouteConfig[] = [
 export const privateRoutes: RouteConfig[] = [
   {
     path: '/',
-    component: Dashboard,
+    component: AIComponentAgent,
     title: 'Dashboard',
     requiresAuth: true,
   },
-  {
-    path: '/ai-agent',
-    component: AIComponentAgent,
-    title: 'AI HTML Generator',
-    requiresAuth: true,
-  },
+  // {
+  //   path: '/',
+  //   component: Dashboard,
+  //   title: 'Dashboard',
+  //   requiresAuth: true,
+  // },
+  // {
+  //   path: '/ai-agent',
+  //   component: AIComponentAgent,
+  //   title: 'AI HTML Generator',
+  //   requiresAuth: true,
+  // },
 ];
 
  export const allRoutes = [...publicRoutes, ...privateRoutes];

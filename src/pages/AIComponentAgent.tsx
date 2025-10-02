@@ -1017,6 +1017,7 @@ const AIComponentAgent: React.FC = () => {
               onHtmlChange={(newHtml) => {
                 setGeneratedHTML(prev => prev ? { ...prev, html: newHtml } : null);
               }}
+              isGenerating={isGenerating}
             />
           ) : (
             <Box sx={{ 
