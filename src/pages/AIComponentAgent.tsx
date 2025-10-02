@@ -17,11 +17,11 @@ import {
   Chip,
   useTheme,
 } from "@mui/material";
+import Lottie from 'lottie-react';
 import {
   Upload,
   Link as LinkIcon,
   FileText as Description,
-  Sparkles as AutoAwesome,
   X as Clear,
   History,
   Settings,
@@ -37,6 +37,7 @@ import HTMLGenerator from "../services/htmlGenerator";
 import CodeEditorPreview from "../components/CodeEditorPreview";
 import QuickTipsModal from "../components/QuickTipsModal";
 import AdsSection from "../components/AdsSection";
+import programmingAnimation from '../components/animations/programming.json';
 import {
   AI_PROVIDERS,
   getModelsByProvider,
@@ -1232,11 +1233,16 @@ const AIComponentAgent: React.FC = () => {
                   mb: 4,
                 }}
               >
-                <AutoAwesome size={48} style={{ opacity: 0.3 }} />
+                <Box sx={{ width: 300, height: 300}}>
+                  <Lottie
+                    animationData={programmingAnimation}
+                    loop={true}
+                    autoplay={true}
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </Box>
                 <Typography variant="h6">Generate Code to see preview</Typography>
-                <Typography variant="body2">
-                  Choose an input method and click Generate Code
-                </Typography>
+              
 
                 <Button
                   variant="outlined"
@@ -1374,8 +1380,7 @@ const AIComponentAgent: React.FC = () => {
                   };
                   setGeneratedHTML(testHTML);
                 }}
-                sx={{ mt: 2 }}
-              >
+               >
                 Try Sample Preview
               </Button>
               </Box>

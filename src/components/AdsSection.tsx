@@ -301,28 +301,7 @@ const AdsSection: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Promotional banner */}
-      <Box
-        sx={{
-          mt: 3,
-          p: 3,
-          borderRadius: "12px",
-          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-          color: "white",
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-          🚀 More AI Tools Coming Soon!
-        </Typography>
-        <Typography
-          variant="body2"
-          sx={{ fontSize: "0.9rem", opacity: 0.9, lineHeight: 1.4 }}
-        >
-          Stay tuned for more innovative AI-powered tools to enhance your
-          productivity.
-        </Typography>
-      </Box>
+      
     </Box>
   );
 };
