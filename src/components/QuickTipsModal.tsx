@@ -235,8 +235,7 @@ const QuickTipsModal: React.FC<QuickTipsModalProps> = ({
           borderRadius: '16px',
           outline: 'none',
           boxShadow: 'none',
-          border: '1px solid #e2e8f0',
-          // Hide scrollbar but keep functionality
+           // Hide scrollbar but keep functionality
           '&::-webkit-scrollbar': {
             display: 'none',
           },

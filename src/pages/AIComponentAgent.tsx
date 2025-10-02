@@ -15,6 +15,7 @@ import {
   Paper,
   IconButton,
   Chip,
+  useTheme,
 } from "@mui/material";
 import {
   Upload,
@@ -65,6 +66,8 @@ function TabPanel({ children, value, index, ...other }: TabPanelProps) {
  * Main AI Agent interface for generating React components
  */
 const AIComponentAgent: React.FC = () => {
+  const theme = useTheme();
+  
   // Core state
   const [activeTab, setActiveTab] = useState(0);
   const [generatedHTML, setGeneratedHTML] = useState<GeneratedHTML | null>(
@@ -289,7 +292,7 @@ const AIComponentAgent: React.FC = () => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#f8fafc",
+        backgroundColor: theme.palette.background.default,
       }}
     >
       {/* Header */}
@@ -297,12 +300,12 @@ const AIComponentAgent: React.FC = () => {
         sx={{
           px: 2,
           py: 1.5,
-          borderBottom: "1px solid #e2e8f0",
+          borderBottom: `1px solid ${theme.palette.divider}`,
           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+          boxShadow: theme.palette.mode === 'dark' ? '0 4px 6px -1px rgba(0, 0, 0, 0.3)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
         }}
       >
         <Box>
@@ -346,11 +349,11 @@ const AIComponentAgent: React.FC = () => {
           elevation={0}
           sx={{
             width: 340,
-            borderRight: "1px solid #e2e8f0",
+            borderRight: `1px solid ${theme.palette.divider}`,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "white",
-            boxShadow: "4px 0 6px -1px rgba(0, 0, 0, 0.1)",
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: theme.palette.mode === 'dark' ? '4px 0 6px -1px rgba(0, 0, 0, 0.3)' : '4px 0 6px -1px rgba(0, 0, 0, 0.1)',
           }}
         >
           <Box
@@ -379,7 +382,7 @@ const AIComponentAgent: React.FC = () => {
                     minHeight: 40,
                     minWidth: 0,
                     flex: 1,
-                    color: "#64748b",
+                    color: theme.palette.text.secondary,
                     "&.Mui-selected": {
                       color: "#667eea",
                     },
@@ -411,10 +414,10 @@ const AIComponentAgent: React.FC = () => {
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& fieldset": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover fieldset": {
                           borderColor: "#667eea",
@@ -425,7 +428,7 @@ const AIComponentAgent: React.FC = () => {
                         },
                       },
                       "& .MuiInputLabel-root": {
-                        color: "#64748b",
+                        color: theme.palette.text.secondary,
                         fontSize: "0.875rem",
                         "&.Mui-focused": {
                           color: "#667eea",
@@ -444,10 +447,10 @@ const AIComponentAgent: React.FC = () => {
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& fieldset": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover fieldset": {
                           borderColor: "#667eea",
@@ -458,14 +461,14 @@ const AIComponentAgent: React.FC = () => {
                         },
                       },
                       "& .MuiInputLabel-root": {
-                        color: "#64748b",
+                        color: theme.palette.text.secondary,
                         fontSize: "0.875rem",
                         "&.Mui-focused": {
                           color: "#667eea",
                         },
                       },
                       "& .MuiFormHelperText-root": {
-                        color: "#64748b",
+                        color: theme.palette.text.secondary,
                         fontSize: "0.75rem",
                       },
                     }}
@@ -492,15 +495,15 @@ const AIComponentAgent: React.FC = () => {
                     fullWidth
                     sx={{
                       borderRadius: "8px",
-                      borderColor: "#e2e8f0",
-                      color: "#64748b",
+                      borderColor: theme.palette.divider,
+                      color: theme.palette.text.secondary,
                       textTransform: "none",
                       fontWeight: 600,
                       py: 1.5,
                       "&:hover": {
                         borderColor: "#667eea",
                         color: "#667eea",
-                        backgroundColor: "#f1f5f9",
+                        backgroundColor: theme.palette.action.hover,
                       },
                     }}
                   >
@@ -514,8 +517,8 @@ const AIComponentAgent: React.FC = () => {
                         alignItems: "center",
                         gap: 2,
                         borderRadius: "8px",
-                        border: "1px solid #e2e8f0",
-                        backgroundColor: "#f8fafc",
+                        border: `1px solid ${theme.palette.divider}`,
+                        backgroundColor: theme.palette.background.paper,
                         boxShadow: "none",
                       }}
                     >
@@ -532,11 +535,11 @@ const AIComponentAgent: React.FC = () => {
                       <Box sx={{ flex: 1 }}>
                         <Typography
                           variant="body2"
-                          sx={{ fontWeight: 600, color: "#1e293b" }}
+                          sx={{ fontWeight: 600, color: theme.palette.text.primary }}
                         >
                           {selectedImage.name}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: "#64748b" }}>
+                        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                           {(selectedImage.size / 1024 / 1024).toFixed(1)} MB
                         </Typography>
                       </Box>
@@ -554,10 +557,10 @@ const AIComponentAgent: React.FC = () => {
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& fieldset": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover fieldset": {
                           borderColor: "#667eea",
@@ -568,7 +571,7 @@ const AIComponentAgent: React.FC = () => {
                         },
                       },
                       "& .MuiInputLabel-root": {
-                        color: "#64748b",
+                        color: theme.palette.text.secondary,
                         fontSize: "0.875rem",
                         "&.Mui-focused": {
                           color: "#667eea",
@@ -597,10 +600,10 @@ const AIComponentAgent: React.FC = () => {
                       sx={{
                         "& .MuiOutlinedInput-root": {
                           borderRadius: "6px",
-                          backgroundColor: "#f8fafc",
+                          backgroundColor: theme.palette.background.paper,
                           fontSize: "0.875rem",
                           "& fieldset": {
-                            borderColor: "#e2e8f0",
+                            borderColor: theme.palette.divider,
                           },
                           "&:hover fieldset": {
                             borderColor: "#667eea",
@@ -611,7 +614,7 @@ const AIComponentAgent: React.FC = () => {
                           },
                         },
                         "& .MuiInputLabel-root": {
-                          color: "#64748b",
+                          color: theme.palette.text.secondary,
                           fontSize: "0.875rem",
                           "&.Mui-focused": {
                             color: "#667eea",
@@ -627,12 +630,12 @@ const AIComponentAgent: React.FC = () => {
                         mt: 1,
                         fontSize: "0.75rem",
                         height: 24,
-                        backgroundColor: "#f1f5f9",
+                        backgroundColor: theme.palette.action.hover,
                         color: "#667eea",
-                        border: "1px solid #e2e8f0",
+                        border: `1px solid ${theme.palette.divider}`,
                         cursor: "pointer",
                         "&:hover": {
-                          backgroundColor: "#e2e8f0",
+                          backgroundColor: theme.palette.action.selected,
                           borderColor: "#667eea",
                         },
                       }}
@@ -641,7 +644,7 @@ const AIComponentAgent: React.FC = () => {
 
                   <Typography
                     variant="subtitle2"
-                    sx={{ color: "#1e293b", fontWeight: 600, mt: 1 }}
+                    sx={{ color: theme.palette.text.primary, fontWeight: 600, mt: 1 }}
                   >
                     Additional Requirements:
                   </Typography>
@@ -661,10 +664,10 @@ const AIComponentAgent: React.FC = () => {
                         sx={{
                           "& .MuiOutlinedInput-root": {
                             borderRadius: "6px",
-                            backgroundColor: "#f8fafc",
+                            backgroundColor: theme.palette.background.paper,
                             fontSize: "0.875rem",
                             "& fieldset": {
-                              borderColor: "#e2e8f0",
+                              borderColor: theme.palette.divider,
                             },
                             "&:hover fieldset": {
                               borderColor: "#667eea",
@@ -681,10 +684,10 @@ const AIComponentAgent: React.FC = () => {
                           size="small"
                           onClick={() => removeRequirement(index)}
                           sx={{
-                            color: "#64748b",
+                            color: theme.palette.text.secondary,
                             "&:hover": {
                               color: "#dc2626",
-                              backgroundColor: "#fef2f2",
+                              backgroundColor: theme.palette.mode === 'dark' ? 'rgba(220, 38, 38, 0.1)' : "#fef2f2",
                             },
                           }}
                         >
@@ -702,7 +705,7 @@ const AIComponentAgent: React.FC = () => {
                       fontWeight: 600,
                       color: "#667eea",
                       "&:hover": {
-                        backgroundColor: "#f1f5f9",
+                        backgroundColor: theme.palette.action.hover,
                       },
                     }}
                   >
@@ -729,10 +732,10 @@ const AIComponentAgent: React.FC = () => {
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& fieldset": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover fieldset": {
                           borderColor: "#667eea",
@@ -743,7 +746,7 @@ const AIComponentAgent: React.FC = () => {
                         },
                       },
                       "& .MuiInputLabel-root": {
-                        color: "#64748b",
+                        color: theme.palette.text.secondary,
                         fontSize: "0.875rem",
                         "&.Mui-focused": {
                           color: "#667eea",
@@ -754,7 +757,7 @@ const AIComponentAgent: React.FC = () => {
 
                   <Typography
                     variant="body2"
-                    sx={{ color: "#64748b", fontWeight: 600, mt: 1, mb: 0.5 }}
+                    sx={{ color: theme.palette.text.secondary, fontWeight: 600, mt: 1, mb: 0.5 }}
                   >
                     AI Configuration
                   </Typography>
@@ -780,10 +783,10 @@ const AIComponentAgent: React.FC = () => {
                       }}
                       sx={{
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#667eea",
@@ -819,10 +822,10 @@ const AIComponentAgent: React.FC = () => {
                       }
                       sx={{
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#667eea",
@@ -844,7 +847,7 @@ const AIComponentAgent: React.FC = () => {
                             </Typography>
                             <Typography
                               variant="caption"
-                              sx={{ color: "#64748b" }}
+                              sx={{ color: theme.palette.text.secondary }}
                             >
                               {model.description}
                             </Typography>
@@ -856,7 +859,7 @@ const AIComponentAgent: React.FC = () => {
 
                   <Typography
                     variant="body2"
-                    sx={{ color: "#64748b", fontWeight: 600, mt: 1, mb: 0.5 }}
+                    sx={{ color: theme.palette.text.secondary, fontWeight: 600, mt: 1, mb: 0.5 }}
                   >
                     HTML Framework
                   </Typography>
@@ -872,10 +875,10 @@ const AIComponentAgent: React.FC = () => {
                       }
                       sx={{
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#667eea",
@@ -894,7 +897,7 @@ const AIComponentAgent: React.FC = () => {
 
                   <Typography
                     variant="body2"
-                    sx={{ color: "#64748b", fontWeight: 600, mt: 2, mb: 0.5 }}
+                    sx={{ color: theme.palette.text.secondary, fontWeight: 600, mt: 2, mb: 0.5 }}
                   >
                     React Framework
                   </Typography>
@@ -910,10 +913,10 @@ const AIComponentAgent: React.FC = () => {
                       }
                       sx={{
                         borderRadius: "6px",
-                        backgroundColor: "#f8fafc",
+                        backgroundColor: theme.palette.background.paper,
                         fontSize: "0.875rem",
                         "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#e2e8f0",
+                          borderColor: theme.palette.divider,
                         },
                         "&:hover .MuiOutlinedInput-notchedOutline": {
                           borderColor: "#667eea",
@@ -935,7 +938,7 @@ const AIComponentAgent: React.FC = () => {
 
                   <Typography
                     variant="body2"
-                    sx={{ color: "#64748b", fontWeight: 600, mt: 1, mb: 0.5 }}
+                    sx={{ color: theme.palette.text.secondary, fontWeight: 600, mt: 1, mb: 0.5 }}
                   >
                     HTML Features
                   </Typography>
@@ -970,7 +973,7 @@ const AIComponentAgent: React.FC = () => {
                               },
                             },
                             "& .MuiSwitch-track": {
-                              backgroundColor: "#cbd5e1",
+                              backgroundColor: theme.palette.action.disabled,
                             },
                           }}
                         />
@@ -978,7 +981,7 @@ const AIComponentAgent: React.FC = () => {
                       label="Responsive Design"
                       sx={{
                         "& .MuiFormControlLabel-label": {
-                          color: "#64748b",
+                          color: theme.palette.text.secondary,
                           fontWeight: 500,
                           fontSize: "0.875rem",
                         },
@@ -1006,7 +1009,7 @@ const AIComponentAgent: React.FC = () => {
                               },
                             },
                             "& .MuiSwitch-track": {
-                              backgroundColor: "#cbd5e1",
+                              backgroundColor: theme.palette.action.disabled,
                             },
                           }}
                         />
@@ -1014,7 +1017,7 @@ const AIComponentAgent: React.FC = () => {
                       label="Animations & Transitions"
                       sx={{
                         "& .MuiFormControlLabel-label": {
-                          color: "#64748b",
+                          color: theme.palette.text.secondary,
                           fontWeight: 500,
                           fontSize: "0.875rem",
                         },
@@ -1042,7 +1045,7 @@ const AIComponentAgent: React.FC = () => {
                               },
                             },
                             "& .MuiSwitch-track": {
-                              backgroundColor: "#cbd5e1",
+                              backgroundColor: theme.palette.action.disabled,
                             },
                           }}
                         />
@@ -1050,7 +1053,7 @@ const AIComponentAgent: React.FC = () => {
                       label="JavaScript Interactions"
                       sx={{
                         "& .MuiFormControlLabel-label": {
-                          color: "#64748b",
+                          color: theme.palette.text.secondary,
                           fontWeight: 500,
                           fontSize: "0.875rem",
                         },
@@ -1060,7 +1063,7 @@ const AIComponentAgent: React.FC = () => {
 
                   <Typography
                     variant="body2"
-                    sx={{ color: "#64748b", fontWeight: 600, mt: 2, mb: 0.5 }}
+                    sx={{ color: theme.palette.text.secondary, fontWeight: 600, mt: 2, mb: 0.5 }}
                   >
                     API Status
                   </Typography>
@@ -1088,7 +1091,7 @@ const AIComponentAgent: React.FC = () => {
                               : "#ef4444",
                           }}
                         />
-                        <Typography variant="caption" sx={{ color: "#64748b" }}>
+                        <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                           {provider.name}:{" "}
                           {isProviderConfigured(provider.id)
                             ? "Configured"
@@ -1117,7 +1120,7 @@ const AIComponentAgent: React.FC = () => {
 
             {/* Generate Button at Bottom - Hidden on Config tab */}
             {activeTab !== 3 && (
-              <Box sx={{ p: 2.5, pt: 1, borderTop: "1px solid #f1f5f9" }}>
+              <Box sx={{ p: 2.5, pt: 1, borderTop: `1px solid ${theme.palette.divider}` }}>
                 <Button
                   variant="contained"
                   size="large"
@@ -1140,8 +1143,8 @@ const AIComponentAgent: React.FC = () => {
                       transform: "translateY(-1px)",
                     },
                     "&:disabled": {
-                      background: "#cbd5e1",
-                      color: "#94a3b8",
+                      background: theme.palette.action.disabledBackground,
+                      color: theme.palette.action.disabled,
                     },
                   }}
                 >
@@ -1156,14 +1159,14 @@ const AIComponentAgent: React.FC = () => {
                     sx={{
                       mt: 2,
                       borderRadius: "6px",
-                      backgroundColor: "#fef2f2",
-                      border: "1px solid #fecaca",
+                      backgroundColor: theme.palette.mode === 'dark' ? 'rgba(220, 38, 38, 0.1)' : "#fef2f2",
+                      border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(220, 38, 38, 0.3)' : '#fecaca'}`,
                       fontSize: "0.8rem",
                       "& .MuiAlert-icon": {
                         color: "#dc2626",
                       },
                       "& .MuiAlert-message": {
-                        color: "#991b1b",
+                        color: theme.palette.mode === 'dark' ? '#ff6b6b' : "#991b1b",
                       },
                     }}
                   >
@@ -1181,7 +1184,7 @@ const AIComponentAgent: React.FC = () => {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "#ffffff",
+            backgroundColor: theme.palette.background.default,
           }}
         >
           {generatedHTML || isGenerating ? (
