@@ -1135,13 +1135,10 @@ const AIComponentAgent: React.FC = () => {
                     textTransform: "none",
                     fontWeight: 600,
                     fontSize: "0.9rem",
-                    boxShadow: "0 3px 10px 0 rgba(102, 126, 234, 0.25)",
-                    "&:hover": {
+                     "&:hover": {
                       background:
                         "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
-                      boxShadow: "0 4px 15px 0 rgba(102, 126, 234, 0.35)",
-                      transform: "translateY(-1px)",
-                    },
+                     },
                     "&:disabled": {
                       background: theme.palette.action.disabledBackground,
                       color: theme.palette.action.disabled,
