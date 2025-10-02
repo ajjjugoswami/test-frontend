@@ -53,7 +53,12 @@ class HTMLGenerator {
       // Generate the HTML code
       const generatedHTML = await this.generateCode(context, requirements);
       
-      this.updateProgress('complete', 'HTML generated successfully!', 100);
+      this.updateProgress('generating', 'Generating React component...', 70);
+      
+      // Generate the React code
+      const reactCode = await this.generateReactCode(context, requirements);
+      
+      this.updateProgress('complete', 'HTML and React code generated successfully!', 100);
       
       const generationTime = Date.now() - startTime;
       
@@ -61,6 +66,7 @@ class HTMLGenerator {
         id: this.generateId(),
         name: requirements.name,
         html: generatedHTML,
+        reactCode: reactCode,
         rawResponse: this.lastRawResponse,
         description: input.description,
         features: this.extractFeatures(generatedHTML, requirements),
@@ -278,6 +284,256 @@ Generate the complete HTML file:`;
 - Implement responsive design with CSS media queries
 - Keep all code self-contained and framework-free`;
     }
+  }
+
+  private getReactFrameworkInstructions(reactFramework: HTMLRequirements['reactFramework']): string {
+    switch (reactFramework) {
+      case 'mui':
+        return `MATERIAL-UI (MUI) REQUIREMENTS:
+- Import necessary components from '@mui/material'
+- Import icons from '@mui/icons-material' if needed
+- Use MUI's sx prop for styling and customization
+- Use MUI's theme system with proper colors and spacing
+- Import and use MUI components like Box, Typography, Button, Card, etc.
+- Use MUI's breakpoints for responsive design: theme.breakpoints.down('md')
+- Follow Material Design principles
+
+EXAMPLE STRUCTURE:
+\`\`\`tsx
+import React, { useState } from 'react';
+import { 
+  Box, 
+  Typography, 
+  Button, 
+  Card, 
+  CardContent 
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+const StyledContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(3),
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(2),
+  },
+}));
+
+const ${'{ComponentName}'}: React.FC = () => {
+  return (
+    <StyledContainer>
+      <Typography variant="h4" component="h1">
+        Content
+      </Typography>
+    </StyledContainer>
+  );
+};
+\`\`\``;
+
+      case 'antd':
+        return `ANT DESIGN REQUIREMENTS:
+- Import necessary components from 'antd'
+- Import icons from '@ant-design/icons' if needed
+- Use Ant Design's built-in styling system
+- Use antd components like Layout, Typography, Button, Card, etc.
+- Use antd's responsive utilities and breakpoints
+- Follow Ant Design system principles
+- Use antd's theme customization if needed
+
+EXAMPLE STRUCTURE:
+\`\`\`tsx
+import React, { useState } from 'react';
+import { 
+  Layout, 
+  Typography, 
+  Button, 
+  Card, 
+  Space 
+} from 'antd';
+import type { FC } from 'react';
+
+const { Content } = Layout;
+const { Title, Text } = Typography;
+
+const ${'{ComponentName}'}: FC = () => {
+  return (
+    <Layout>
+      <Content style={{ padding: '24px' }}>
+        <Title level={1}>Content</Title>
+      </Content>
+    </Layout>
+  );
+};
+\`\`\``;
+
+      case 'tailwind':
+        return `TAILWIND CSS REQUIREMENTS:
+- Use Tailwind utility classes for ALL styling
+- No custom CSS or styled-components
+- Use Tailwind's responsive prefixes (sm:, md:, lg:, xl:)
+- Use Tailwind's color palette and spacing system
+- Use Tailwind's flexbox and grid utilities
+- Apply hover, focus, and other state variants
+- Use Tailwind's animation utilities
+
+EXAMPLE STRUCTURE:
+\`\`\`tsx
+import React, { useState } from 'react';
+
+const ${'{ComponentName}'}: React.FC = () => {
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold text-gray-900 mb-4">
+        Content
+      </h1>
+    </div>
+  );
+};
+\`\`\``;
+
+      case 'styled-components':
+      default:
+        return `STYLED-COMPONENTS REQUIREMENTS:
+- Use styled-components for ALL styling (no CSS files)
+- Import React and styled from 'styled-components'
+- Define all styled components at the top after imports
+- Use descriptive names for styled components (Container, Header, Button, etc.)
+- Use template literals with CSS for styling
+- Include hover states, transitions, and media queries as needed
+
+EXAMPLE STRUCTURE:
+\`\`\`tsx
+import React, { useState } from 'react';
+import styled from 'styled-components';
+
+const Container = styled.div\`
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+\`;
+
+const Header = styled.h1\`
+  font-size: 2rem;
+  color: #333;
+\`;
+
+const ${'{ComponentName}'}: React.FC = () => {
+  return (
+    <Container>
+      <Header>Content</Header>
+    </Container>
+  );
+};
+\`\`\``;
+    }
+  }
+
+  private async generateReactCode(context: string, requirements: HTMLRequirements): Promise<string> {
+    if (this.config.provider === 'perplexity') {
+      return this.generateReactWithPerplexity(context, requirements);
+    } else {
+      return this.generateReactWithGoogle(context, requirements);
+    }
+  }
+
+  private async generateReactWithGoogle(context: string, requirements: HTMLRequirements): Promise<string> {
+    const model = genAI.getGenerativeModel({ 
+      model: this.config.model,
+      generationConfig: {
+        temperature: this.config.temperature,
+        maxOutputTokens: this.config.maxTokens,
+      }
+    });
+
+    const frameworkInstructions = this.getReactFrameworkInstructions(requirements.reactFramework);
+    const prompt = `You are an expert React developer. Create a React component using ${requirements.reactFramework} based on the following requirements:
+
+CONTEXT:
+${context}
+
+REQUIREMENTS:
+- Component name: ${requirements.name}
+- React Framework: ${requirements.reactFramework}
+- Responsive design: ${requirements.responsive}
+- Include animations: ${requirements.animations}  
+- Interactive elements: ${requirements.interactive}
+
+${frameworkInstructions}
+
+GENERAL REQUIREMENTS:
+- Create a complete React functional component using TypeScript
+- Export the component as default
+- Use modern React hooks (useState, useEffect, etc.) if needed
+- Make the component fully self-contained
+- Include proper TypeScript types for props if needed
+${requirements.responsive ? '- Implement responsive design' : ''}
+${requirements.animations ? '- Include smooth animations and transitions' : ''}
+${requirements.interactive ? '- Add proper event handlers and state management' : ''}
+
+IMPORTANT: 
+- Return ONLY the complete React component code, no explanations
+- Use TypeScript syntax (.tsx)
+- Follow the framework-specific patterns and best practices
+- Ensure the component is production-ready and well-structured
+- Include proper error handling if needed
+
+Generate the React component:`;
+
+    const result = await model.generateContent(prompt);
+    const rawResponse = result.response.text();
+    let reactCode = rawResponse;
+    
+    // Clean up the response
+    reactCode = reactCode.replace(/```tsx\n?/g, '').replace(/```typescript\n?/g, '').replace(/```/g, '').trim();
+    
+    return reactCode;
+  }
+
+  private async generateReactWithPerplexity(context: string, requirements: HTMLRequirements): Promise<string> {
+    const perplexityService = new PerplexityService();
+    const frameworkInstructions = this.getReactFrameworkInstructions(requirements.reactFramework);
+
+    const prompt = `You are an expert React developer. Create a React component using ${requirements.reactFramework} based on the following requirements:
+
+CONTEXT:
+${context}
+
+REQUIREMENTS:
+- Component name: ${requirements.name}
+- React Framework: ${requirements.reactFramework}
+- Responsive design: ${requirements.responsive}
+- Include animations: ${requirements.animations}
+- Interactive elements: ${requirements.interactive}
+
+${frameworkInstructions}
+
+GENERAL REQUIREMENTS:
+- Create a complete React functional component using TypeScript
+- Export the component as default  
+- Use modern React hooks (useState, useEffect, etc.) if needed
+- Make the component fully self-contained
+- Include proper TypeScript types for props if needed
+${requirements.responsive ? '- Implement responsive design' : ''}
+${requirements.animations ? '- Include smooth animations and transitions' : ''}
+${requirements.interactive ? '- Add proper event handlers and state management' : ''}
+
+IMPORTANT: 
+- Return ONLY the complete React component code, no explanations
+- Use TypeScript syntax (.tsx)
+- Follow the framework-specific patterns and best practices
+- Ensure the component is production-ready and well-structured
+
+Generate the React component:`;
+
+    const result = await perplexityService.generateHTML(prompt, this.config.model, {
+      temperature: this.config.temperature,
+      max_tokens: this.config.maxTokens,
+    });
+    
+    let reactCode = result;
+    
+    // Clean up the response
+    reactCode = reactCode.replace(/```tsx\n?/g, '').replace(/```typescript\n?/g, '').replace(/```/g, '').trim();
+    
+    return reactCode;
   }
 
   private extractFeatures(html: string, requirements: HTMLRequirements): string[] {

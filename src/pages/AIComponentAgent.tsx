@@ -79,6 +79,7 @@ const AIComponentAgent: React.FC = () => {
   const [componentRequirements, setComponentRequirements] = useState<HTMLRequirements>({
     name: 'MyComponent',
     framework: 'vanilla',
+    reactFramework: 'styled-components',
     responsive: true,
     animations: false,
     interactive: false
@@ -761,6 +762,40 @@ const AIComponentAgent: React.FC = () => {
                     </Select>
                   </FormControl>
                   
+                  <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mt: 2, mb: 0.5 }}>
+                    React Framework
+                  </Typography>
+                  
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={componentRequirements.reactFramework}
+                      onChange={(e) => setComponentRequirements(prev => ({
+                        ...prev,
+                        reactFramework: e.target.value as any
+                      }))}
+                      sx={{
+                        borderRadius: '6px',
+                        backgroundColor: '#f8fafc',
+                        fontSize: '0.875rem',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#e2e8f0',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#667eea',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#667eea',
+                          borderWidth: '2px',
+                        },
+                      }}
+                    >
+                      <MenuItem value="styled-components">Styled Components</MenuItem>
+                      <MenuItem value="mui">Material-UI (MUI)</MenuItem>
+                      <MenuItem value="antd">Ant Design</MenuItem>
+                      <MenuItem value="tailwind">Tailwind CSS</MenuItem>
+                    </Select>
+                  </FormControl>
+                  
                   <Typography variant="body2" sx={{ color: '#64748b', fontWeight: 600, mt: 1, mb: 0.5 }}>
                     HTML Features
                   </Typography>
@@ -976,6 +1011,7 @@ const AIComponentAgent: React.FC = () => {
           {generatedHTML ? (
             <CodeEditorPreview
               html={generatedHTML}
+              reactFramework={componentRequirements.reactFramework}
               onDownload={handleSaveHTML}
               onCopyCode={(code) => console.log('Code copied:', code)}
               onHtmlChange={(newHtml) => {

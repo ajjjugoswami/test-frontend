@@ -2,6 +2,7 @@ export interface GeneratedHTML {
   id: string;
   name: string;
   html: string;
+  reactCode?: string; // React component code with styled-components
   rawResponse?: string;
   description: string;
   features: string[];
@@ -25,6 +26,7 @@ export interface HTMLInput {
 export interface HTMLRequirements {
   name: string;
   framework: 'vanilla' | 'bootstrap' | 'tailwind';
+  reactFramework: 'styled-components' | 'mui' | 'antd' | 'tailwind';
   responsive: boolean;
   animations: boolean;
   interactive: boolean;

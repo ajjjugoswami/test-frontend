@@ -24,6 +24,7 @@ import { GeneratedHTML } from '../types/htmlGenerator';
 
 interface CodeEditorPreviewProps {
   html: GeneratedHTML;
+  reactFramework?: 'styled-components' | 'mui' | 'antd' | 'tailwind';
   onDownload?: (html: GeneratedHTML) => void;
   onCopyCode?: (code: string) => void;
   onHtmlChange?: (newHtml: string) => void;
@@ -31,12 +32,13 @@ interface CodeEditorPreviewProps {
 
 const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   html,
+  reactFramework = 'styled-components',
   onDownload,
   onCopyCode,
   onHtmlChange,
 }) => {
   const [activeView, setActiveView] = useState<'preview' | 'code'>('preview');
-  const [codeTab, setCodeTab] = useState<'html' | 'raw'>('html');
+  const [codeTab, setCodeTab] = useState<'html' | 'react' | 'raw'>('html');
   const [copySuccess, setCopySuccess] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
   const [editedHtml, setEditedHtml] = useState(html.html);
@@ -44,29 +46,73 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const editorRef = useRef<any>(null);
 
-  const currentHtml = hasChanges ? editedHtml : html.html;
+  // Separate concerns: preview always uses HTML, editor content depends on active tab
+  const previewHtml = hasChanges ? editedHtml : html.html;
+  const currentEditorContent = (() => {
+    switch (codeTab) {
+      case 'html':
+        return hasChanges ? editedHtml : html.html;
+      case 'react':
+        return html.reactCode || 'No React code available';
+      case 'raw':
+        return html.rawResponse || 'No raw response available';
+      default:
+        return html.html;
+    }
+  })();
 
-  const updatePreview = () => {
-    if (iframeRef.current) {
+  // Update editedHtml when html prop changes (new generation)
+  React.useEffect(() => {
+    setEditedHtml(html.html);
+    setHasChanges(false);
+  }, [html.html]);
+
+  const updatePreview = React.useCallback(() => {
+    if (iframeRef.current && activeView === 'preview') {
       const iframe = iframeRef.current;
-      const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      if (doc) {
-        doc.open();
-        doc.write(currentHtml);
-        doc.close();
+      try {
+        // Always use HTML content for preview, never React code
+        const updateContent = () => {
+          const doc = iframe.contentDocument || iframe.contentWindow?.document;
+          if (doc) {
+            doc.open();
+            doc.write(previewHtml);
+            doc.close();
+          }
+        };
+
+        // If iframe is already loaded, update immediately
+        if (iframe.contentDocument?.readyState === 'complete') {
+          updateContent();
+        } else {
+          // Wait for iframe to load
+          iframe.onload = updateContent;
+        }
+      } catch (error) {
+        console.error('Error updating preview:', error);
       }
     }
-  };
+  }, [previewHtml, activeView]);
 
   React.useEffect(() => {
     if (activeView === 'preview') {
-      updatePreview();
+      // Small delay to ensure iframe is ready
+      const timer = setTimeout(updatePreview, 100);
+      return () => clearTimeout(timer);
     }
-  }, [currentHtml, activeView]);
+  }, [previewHtml, activeView, updatePreview]);
 
   const handleCopyCode = async () => {
     try {
-      const textToCopy = codeTab === 'html' ? currentHtml : (html.rawResponse || 'No raw response available');
+      let textToCopy = '';
+      if (codeTab === 'html') {
+        textToCopy = hasChanges ? editedHtml : html.html;
+      } else if (codeTab === 'react') {
+        textToCopy = html.reactCode || 'No React code available';
+      } else {
+        textToCopy = html.rawResponse || 'No raw response available';
+      }
+      
       await navigator.clipboard.writeText(textToCopy);
       onCopyCode?.(textToCopy);
       setCopySuccess(true);
@@ -77,7 +123,9 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   };
 
   const handleDownload = () => {
-    const blob = new Blob([currentHtml], { type: 'text/html' });
+    // Always download HTML content
+    const htmlToDownload = hasChanges ? editedHtml : html.html;
+    const blob = new Blob([htmlToDownload], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -98,7 +146,9 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
   const handleOpenInNewTab = () => {
     const newWindow = window.open('', '_blank');
     if (newWindow) {
-      newWindow.document.write(currentHtml);
+      // Always use HTML content for new tab
+      const htmlToOpen = hasChanges ? editedHtml : html.html;
+      newWindow.document.write(htmlToOpen);
       newWindow.document.close();
     }
   };
@@ -130,7 +180,13 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
       minimap: { enabled: false },
       scrollBeyondLastLine: false,
       automaticLayout: true,
+      readOnly: false, // Ensure editor is editable
     });
+    
+    // Focus the editor when it mounts for better UX
+    setTimeout(() => {
+      editor.focus();
+    }, 100);
   };
 
   return (
@@ -181,7 +237,15 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
             <Tooltip title="Code Editor">
               <IconButton 
                 size="small" 
-                onClick={() => setActiveView('code')}
+                onClick={() => {
+                  setActiveView('code');
+                  // Focus editor after switching to code view
+                  setTimeout(() => {
+                    if (editorRef.current && codeTab === 'html') {
+                      editorRef.current.focus();
+                    }
+                  }, 200);
+                }}
                 sx={{ 
                   backgroundColor: activeView === 'code' ? '#e3f2fd' : 'transparent',
                   '&:hover': { backgroundColor: '#f5f5f5' }
@@ -245,7 +309,17 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
             <Box sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: '#f5f5f5' }}>
               <Tabs 
                 value={codeTab} 
-                onChange={(_, newValue) => setCodeTab(newValue)}
+                onChange={(_, newValue) => {
+                  setCodeTab(newValue);
+                  // Focus editor when switching to HTML tab
+                  if (newValue === 'html') {
+                    setTimeout(() => {
+                      if (editorRef.current) {
+                        editorRef.current.focus();
+                      }
+                    }, 100);
+                  }
+                }}
                 variant="fullWidth"
                 sx={{
                   minHeight: 36,
@@ -257,7 +331,18 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   }
                 }}
               >
-                <Tab label="Cleaned HTML" value="html" />
+                <Tab label="HTML Code" value="html" />
+                <Tab 
+                  label={
+                    html.reactCode 
+                      ? `React (${reactFramework === 'styled-components' ? 'Styled' : 
+                          reactFramework === 'mui' ? 'MUI' :
+                          reactFramework === 'antd' ? 'Antd' : 'Tailwind'})`
+                      : 'React (N/A)'
+                  } 
+                  value="react" 
+                  disabled={!html.reactCode}
+                />
                 <Tab 
                   label={`Raw API Response ${html.rawResponse ? '' : '(N/A)'}`} 
                   value="raw" 
@@ -269,11 +354,16 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
             {/* Editor Content */}
             <Box sx={{ flex: 1 }}>
               <Editor
+                key={`editor-${codeTab}`} // Force re-render when switching tabs
                 height="100%"
-                defaultLanguage={codeTab === 'html' ? 'html' : 'text'}
-                value={codeTab === 'html' ? editedHtml : (html.rawResponse || 'No raw response available')}
+                language={
+                  codeTab === 'html' ? 'html' : 
+                  codeTab === 'react' ? 'typescript' : 
+                  'text'
+                }
+                value={currentEditorContent}
                 onChange={codeTab === 'html' ? handleEditorChange : undefined}
-                onMount={onEditorMount}
+                onMount={codeTab === 'html' ? onEditorMount : undefined}
                 theme="vs"
                 options={{
                   fontSize: 14,
@@ -294,7 +384,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   cursorStyle: 'line',
                   renderWhitespace: 'selection',
                   bracketPairColorization: { enabled: true },
-                  readOnly: codeTab === 'raw',
+                  readOnly: codeTab !== 'html', // Only HTML is editable, React and Raw are read-only
                 }}
               />
             </Box>
@@ -326,7 +416,7 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
               )}
             </Box>
             
-            <Box sx={{ flex: 1, overflow: 'hidden' }}>
+            <Box sx={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
               <iframe
                 key={previewKey}
                 ref={iframeRef}
@@ -338,6 +428,12 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
                   backgroundColor: 'white'
                 }}
                 sandbox="allow-scripts allow-same-origin allow-forms"
+                onLoad={() => {
+                  // Ensure content is updated when iframe loads
+                  if (activeView === 'preview') {
+                    updatePreview();
+                  }
+                }}
               />
             </Box>
           </Box>
@@ -357,12 +453,20 @@ const CodeEditorPreview: React.FC<CodeEditorPreviewProps> = ({
           {html.description}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {activeView === 'code' && codeTab === 'raw' ? (
-            html.rawResponse ? 
-              `${html.rawResponse.length} characters • ${html.rawResponse.split('\n').length} lines • Raw API Response` :
-              'No raw response available'
+          {activeView === 'code' ? (
+            codeTab === 'raw' ? (
+              html.rawResponse ? 
+                `${html.rawResponse.length} characters • ${html.rawResponse.split('\n').length} lines • Raw API Response` :
+                'No raw response available'
+            ) : codeTab === 'react' ? (
+              html.reactCode ?
+                `${html.reactCode.length} characters • ${html.reactCode.split('\n').length} lines • React (${reactFramework.toUpperCase()}) • Read-only` :
+                'No React code available'
+            ) : (
+              `${(hasChanges ? editedHtml : html.html).length} characters • ${(hasChanges ? editedHtml : html.html).split('\n').length} lines${hasChanges ? ' • Modified' : ''}`
+            )
           ) : (
-            `${currentHtml.length} characters • ${currentHtml.split('\n').length} lines${hasChanges ? ' • Modified' : ''}`
+            `${previewHtml.length} characters • ${previewHtml.split('\n').length} lines${hasChanges ? ' • Modified' : ''} • Preview`
           )}
         </Typography>
       </Box>
