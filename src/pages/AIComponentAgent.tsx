@@ -1120,7 +1120,7 @@ const AIComponentAgent: React.FC = () => {
 
             {/* Generate Button at Bottom - Hidden on Config tab */}
             {activeTab !== 3 && (
-              <Box sx={{ p: 2.5, pt: 1, borderTop: `1px solid ${theme.palette.divider}` }}>
+              <Box sx={{ p: 2.5, borderTop: `1px solid ${theme.palette.divider}` }}>
                 <Button
                   variant="contained"
                   size="large"
@@ -1129,15 +1129,13 @@ const AIComponentAgent: React.FC = () => {
                   fullWidth
                   sx={{
                     py: 1.2,
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    background: theme.palette.primary.main,
                     borderRadius: "8px",
                     textTransform: "none",
                     fontWeight: 600,
                     fontSize: "0.9rem",
                      "&:hover": {
-                      background:
-                        "linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)",
+                      background: theme.palette.primary.dark,
                      },
                     "&:disabled": {
                       background: theme.palette.action.disabledBackground,
