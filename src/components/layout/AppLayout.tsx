@@ -1,12 +1,14 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 import styled from "styled-components";
 import Sidebar from "./Sidebar";
 
-const LayoutContainer = styled.div`
+const LayoutContainer = styled.div<{ theme: any }>`
   display: flex;
   min-height: 100vh;
-  background: #fff;
+  background: ${props => props.theme.palette.background.default};
   position: relative;
+  transition: background-color 0.3s ease;
 `;
 
 const MainContent = styled.div`
@@ -17,11 +19,12 @@ const MainContent = styled.div`
   min-width: 0;
 `;
 
-const ContentArea = styled.main`
+const ContentArea = styled.main<{ theme: any }>`
   flex: 1;
-  background: #fff;
+  background: ${props => props.theme.palette.background.default};
   overflow: auto;
   position: relative;
+  transition: background-color 0.3s ease;
 `;
 
 interface AppLayoutProps {
@@ -29,11 +32,13 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+  const theme = useTheme();
+  
   return (
-    <LayoutContainer>
+    <LayoutContainer theme={theme}>
       <Sidebar />
       <MainContent>
-        <ContentArea>{children}</ContentArea>
+        <ContentArea theme={theme}>{children}</ContentArea>
       </MainContent>
     </LayoutContainer>
   );

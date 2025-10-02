@@ -7,11 +7,13 @@ import {
   ListItemIcon,
   ListItemText,
   Box,
+  useTheme,
 } from "@mui/material";
 import { LogOut, ChevronRight } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { menuItems } from "../../constants/menuItems";
+import ThemeToggle from "../ThemeToggle";
 import styled from "styled-components";
 
 // Styled components for the collapsible sidebar
@@ -74,6 +76,7 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+  const theme = useTheme();
 
   const handleMenuClick = (key: string) => {
     navigate(key);
@@ -168,7 +171,7 @@ const Sidebar: React.FC = () => {
         sx={{
           "& .MuiDrawer-paper": {
             width: 280,
-            backgroundColor: "#ffffff",
+            backgroundColor: theme.palette.background.default,
             border: "none",
             boxShadow:
               "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
@@ -184,8 +187,8 @@ const Sidebar: React.FC = () => {
         <Box
           sx={{
             p: 3,
-            borderBottom: "1px solid #e2e8f0",
-            background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            background: theme.palette.background.paper,
           }}
         >
           <Box
@@ -204,7 +207,7 @@ const Sidebar: React.FC = () => {
           <Box
             sx={{
               fontSize: "0.85rem",
-              color: "#64748b",
+              color: theme.palette.text.secondary,
               mt: 0.5,
               fontWeight: 500,
             }}
@@ -238,7 +241,6 @@ const Sidebar: React.FC = () => {
                     "&:hover": {
                       background:
                         "linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%)",
-                      transform: "translateX(4px)",
                     },
                     "&::before": {
                       content: '""',
@@ -253,14 +255,13 @@ const Sidebar: React.FC = () => {
                     },
                   },
                   "&:hover": {
-                    backgroundColor: "#f8fafc",
-                    transform: "translateX(2px)",
+                    backgroundColor: theme.palette.action.hover,
                   },
                 }}
               >
                 <ListItemIcon
                   sx={{
-                    color: "#64748b",
+                    color: theme.palette.text.secondary,
                     minWidth: "40px",
                     transition: "all 0.2s ease",
                     "& svg": {
@@ -287,7 +288,7 @@ const Sidebar: React.FC = () => {
           ))}
         </List>
 
-        {/* Logout Button */}
+        {/* Theme Toggle and Logout Section */}
         <Box
           sx={{
             position: "absolute",
@@ -296,19 +297,23 @@ const Sidebar: React.FC = () => {
             right: 16,
           }}
         >
+          {/* Theme Toggle */}
+          <Box sx={{ mb: 2 }}>
+            <ThemeToggle />
+          </Box>
+
           <ListItemButton
             onClick={handleLogout}
             sx={{
               borderRadius: "12px",
               py: 1.2,
-              border: "1px solid #e2e8f0",
+              border: `1px solid ${theme.palette.divider}`,
               transition: "all 0.2s ease",
-              backgroundColor: "#fafafa",
+              backgroundColor: theme.palette.action.hover,
               "&:hover": {
                 background: "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)",
                 borderColor: "#f87171",
                 color: "#dc2626",
-                transform: "translateY(-1px)",
                 boxShadow: "0 4px 6px -1px rgba(220, 38, 38, 0.1)",
                 "& .MuiListItemIcon-root": {
                   color: "#dc2626",
@@ -318,7 +323,7 @@ const Sidebar: React.FC = () => {
           >
             <ListItemIcon
               sx={{
-                color: "#64748b",
+                color: theme.palette.text.secondary,
                 minWidth: "40px",
                 transition: "all 0.2s ease",
                 "& svg": {
