@@ -268,7 +268,7 @@ const AIComponentAgent: React.FC = () => {
 
   const handlePromptSelect = useCallback((prompt: string) => {
     setTextDescription(prompt);
-    setActiveTab(2); // Switch to Text tab
+    setActiveTab(0); // Switch to Text tab
   }, []);
 
   const resetForm = useCallback(() => {

@@ -6,6 +6,7 @@ import {
   IconButton,
   Card,
   CardContent,
+  useTheme,
 } from '@mui/material';
 import { X as Close, LayoutDashboard as Dashboard, FileText as Form, MousePointer as ButtonIcon, Image, List, Navigation, Layout, Home } from 'lucide-react';
 
@@ -210,6 +211,7 @@ const QuickTipsModal: React.FC<QuickTipsModalProps> = ({
   onClose,
   onSelectPrompt,
 }) => {
+  const theme = useTheme();
   const handlePromptSelect = (prompt: string) => {
     onSelectPrompt(prompt);
     onClose();
@@ -235,6 +237,7 @@ const QuickTipsModal: React.FC<QuickTipsModalProps> = ({
           borderRadius: '16px',
           outline: 'none',
           boxShadow: 'none',
+          backgroundColor: theme.palette.background.paper,
            // Hide scrollbar but keep functionality
           '&::-webkit-scrollbar': {
             display: 'none',
@@ -368,7 +371,7 @@ const QuickTipsModal: React.FC<QuickTipsModalProps> = ({
                               variant="subtitle2"
                               sx={{
                                 fontWeight: 600,
-                                color: '#334155',
+                                color: theme.palette.text.primary,
                                 fontSize: '0.85rem',
                               }}
                             >
@@ -378,7 +381,7 @@ const QuickTipsModal: React.FC<QuickTipsModalProps> = ({
                           <Typography
                             variant="body2"
                             sx={{
-                              color: '#64748b',
+                              color: theme.palette.text.secondary,
                               fontSize: '0.75rem',
                               lineHeight: 1.3,
                               pl: 1.5,
