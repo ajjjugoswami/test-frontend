@@ -1246,9 +1246,9 @@ const AIComponentAgent: React.FC = () => {
               }}
             >
               <AutoAwesome size={48} style={{ opacity: 0.3 }} />
-              <Typography variant="h6">Generate HTML to see preview</Typography>
+              <Typography variant="h6">Generate Code to see preview</Typography>
               <Typography variant="body2">
-                Choose an input method and click Generate HTML
+                Choose an input method and click Generate Code
               </Typography>
 
               <Button
