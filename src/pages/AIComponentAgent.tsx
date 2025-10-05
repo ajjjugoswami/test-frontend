@@ -315,7 +315,7 @@ const AIComponentAgent: React.FC = () => {
             component="h1"
             sx={{ fontWeight: 700, color: "white", mb: 0.5 }}
           >
-            Aithor 2.0
+            Snap2 UI
           </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
