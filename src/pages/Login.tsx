@@ -145,8 +145,21 @@ const Login: React.FC = () => {
           justifyContent: "center",
           bgcolor: "#000",
           // p: 4,
+          position: "relative",
         }}
       >
+         <img
+          src="/snap3.png"
+          alt="Logo"
+          style={{
+            maxWidth: "200px",
+            borderRadius: "20px",
+            position: "absolute",
+            top: "20px",
+            left: "120px",
+            transform: "translateX(-50%)",
+          }}
+        />
         <Card
           elevation={0}
           sx={{
@@ -158,6 +171,7 @@ const Login: React.FC = () => {
           <CardContent sx={{ p: { xs: 4, sm: 6 } }}>
             {/* Logo/Brand */}
             <Box sx={{ textAlign: "center", mb: 4 }}>
+              
               <Typography
                 variant="h4"
                 component="h1"
